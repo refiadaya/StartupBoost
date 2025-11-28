@@ -47,35 +47,42 @@ This tool combines technical signal extraction, Python-powered readability analy
 ### **Prerequisites:**
 - Node.js 16+ 
 - Python 3.8+ (optional but recommended)
-- Google Gemini API Key (FREE)
+- **Google Gemini API Key (FREE)** - [Get yours here in 2 minutes](https://aistudio.google.com/app/apikey)
+
+> ⚠️ **IMPORTANT for Teammates/Judges:** See [API_KEY_SETUP.md](./API_KEY_SETUP.md) for detailed setup instructions!
 
 ### **Step 1: Get FREE Gemini API Key**
 
-1. Go to https://ai.google.dev/
-2. Click "Get API Key in Google AI Studio"
-3. Sign in with your Google account
-4. Click "Create API Key"
-5. Copy your key (starts with `AIza...`)
+1. Go to https://aistudio.google.com/app/apikey
+2. Sign in with your Google account
+3. Click "Create API Key" → "Create API key in new project"
+4. Copy your key (starts with `AIza...`)
+
+> 📖 **Detailed guide:** [API_KEY_SETUP.md](./API_KEY_SETUP.md)
 
 ### **Step 2: Configure API Key**
 
-Open `.env` file and add your key:
+Create a `.env` file in the project root and add:
 ```bash
-GEMINI_API_KEY=your_actual_api_key_here
+GEMINI_API_KEY=AIzaYourKeyHere
 PORT=3000
 ```
+
+> ⚠️ **Note:** The `.env` file is git-ignored (not in the repo). Each person needs their own!
 
 ### **Step 3: Install & Run**
 
 ```bash
-# Install dependencies (already done)
+# Install dependencies
 npm install
 
 # Start the server
-npm run dev
+npm start
 ```
 
 Server runs at `http://localhost:3000`
+
+✅ **Test it works:** Open the URL and analyze any website!
 
 ---
 
