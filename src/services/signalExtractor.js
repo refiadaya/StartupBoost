@@ -7,11 +7,13 @@ function extractSignals($) {
   const signals = {
     headings: extractHeadings($),
     ctas: extractCTAs($),
+    callsToAction: extractCTAs($).items.map(cta => cta.text), // For backward compatibility
     contactInfo: extractContactInfo($),
     content: extractContent($),
     metadata: extractMetadata($),
     socialMedia: extractSocialMedia($),
     trustSignals: extractTrustSignals($),
+    startupSignals: extractStartupSignals($), // NEW: Startup-specific signals
     adsAndAnnoyances: extractAdsAndAnnoyances($),
     seo: extractSEO($),
     blogFeatures: extractBlogFeatures($),
@@ -301,6 +303,207 @@ function extractTextContent($) {
     valueProposition: valueProposition.substring(0, 500),
     headingsSummary: headingsSummary.join(' | '),
     wordCount: mainText.split(/\s+/).length,
+  };
+}
+
+/**
+ * Extract startup-specific signals (NEW)
+ * These signals are critical for analyzing startup websites
+ */
+function extractStartupSignals($) {
+  const pageText = $('body').text().toLowerCase();
+  const pageHTML = $('body').html().toLowerCase();
+  
+  // 1. PRICING SIGNALS (Value Proposition)
+  const hasPricing = 
+    $('a[href*="pricing"], a[href*="plans"]').length > 0 ||
+    /pricing|plans|subscribe/i.test(pageText);
+  
+  const pricingPageLink = $('a[href*="pricing"], a[href*="plans"]').first().attr('href') || null;
+  
+  // Check if pricing is visible on homepage
+  const pricingVisible = /\$\d+|€\d+|£\d+|free|month|year|annual/i.test(
+    $('main, .pricing, [class*="price"]').text()
+  );
+  
+  // 2. FREE TRIAL / DEMO SIGNALS (CTA Strength)
+  const hasFreeTrial = 
+    /free\s+trial|try\s+free|14[\s-]day|30[\s-]day|no\s+credit\s+card/i.test(pageText);
+  
+  const hasDemo = 
+    $('a[href*="demo"], button:contains("demo")').length > 0 ||
+    /book\s+demo|schedule\s+demo|request\s+demo|watch\s+demo/i.test(pageText);
+  
+  const trialLength = pageText.match(/(\d+)[\s-]day[\s-]trial/i)?.[1] || null;
+  
+  // 3. CUSTOMER LOGOS / SOCIAL PROOF (Social Proof)
+  const logoSelectors = [
+    '[class*="customer-logo"]',
+    '[class*="client-logo"]', 
+    '[class*="trusted-by"]',
+    '[class*="used-by"]',
+    '[alt*="logo"]'
+  ];
+  
+  const customerLogoCount = logoSelectors.reduce((count, selector) => 
+    count + $(selector).length, 0
+  );
+  
+  const hasCustomerLogos = customerLogoCount > 2; // At least 3 logos = legit
+  
+  // Check for text like "Trusted by Google, Amazon"
+  const hasBrandNames = 
+    /trusted\s+by|used\s+by|powering|customers\s+include/i.test(pageText) &&
+    /google|amazon|microsoft|apple|facebook|netflix|spotify|uber|airbnb/i.test(pageText);
+  
+  // 4. MEDIA MENTIONS / PRESS (Social Proof)
+  const mediaKeywords = [
+    'techcrunch', 'forbes', 'wired', 'venturebeat', 'mashable', 
+    'the verge', 'business insider', 'wall street journal', 'nytimes',
+    'featured in', 'as seen in', 'press', 'coverage'
+  ];
+  
+  const hasMediaMentions = mediaKeywords.some(keyword => 
+    pageText.includes(keyword) || pageHTML.includes(keyword)
+  );
+  
+  const mediaCount = mediaKeywords.filter(keyword => 
+    pageText.includes(keyword)
+  ).length;
+  
+  // 5. PRODUCT VISUALS (Value Proposition)
+  const productImageSelectors = [
+    '[alt*="screenshot"]',
+    '[alt*="dashboard"]',
+    '[alt*="interface"]',
+    '[class*="product-image"]',
+    '[class*="app-screenshot"]'
+  ];
+  
+  const hasScreenshot = productImageSelectors.some(selector => 
+    $(selector).length > 0
+  );
+  
+  // Also check for demo videos
+  const hasDemoVideo = 
+    $('video, iframe[src*="youtube"], iframe[src*="vimeo"], iframe[src*="loom"]').length > 0;
+  
+  // 6. USE CASES / TARGET AUDIENCE (Value Proposition)
+  const useCaseKeywords = [
+    'for developers', 'for marketers', 'for designers', 'for teams',
+    'for startups', 'for enterprise', 'for agencies', 'for freelancers',
+    'use case', 'perfect for', 'ideal for', 'built for'
+  ];
+  
+  const hasUseCases = useCaseKeywords.some(keyword => 
+    pageText.includes(keyword)
+  );
+  
+  const useCaseMatches = useCaseKeywords.filter(keyword => 
+    pageText.includes(keyword)
+  );
+  
+  // 7. FEATURE LIST (Value Proposition + Readability)
+  const hasFeatureList = 
+    $('ul li, ol li').length > 5 && // Has lists
+    /feature|benefit|included|what you get/i.test(pageText);
+  
+  const featureListCount = $('ul li, ol li').length;
+  
+  // 8. TEAM / ABOUT (Social Proof)
+  const hasTeamSection = 
+    $('a[href*="team"], a[href*="about"]').length > 0 ||
+    /our\s+team|meet\s+the\s+team|about\s+us|founded\s+by/i.test(pageText);
+  
+  const hasFounderInfo = 
+    /founder|ceo|co-founder/i.test(pageText);
+  
+  // 9. FUNDING / INVESTORS (Social Proof)
+  const hasFundingInfo = 
+    /backed\s+by|funded\s+by|investors?|series\s+[a-z]|venture|y\s+combinator|ycombinator|500\s+startups|andreessen|sequoia/i.test(pageText);
+  
+  // 10. AWARDS / RECOGNITION (Social Proof)
+  const hasAwards = 
+    /winner|award|recognition|product\s+hunt|#1\s+on|top\s+\d+/i.test(pageText);
+  
+  // 11. CHAT WIDGET (CTA Strength)
+  const chatWidgetSelectors = [
+    '[class*="intercom"]',
+    '[id*="intercom"]',
+    '[class*="drift"]',
+    '[class*="crisp"]',
+    '[class*="tawk"]',
+    'iframe[src*="intercom"]',
+    'iframe[src*="drift"]'
+  ];
+  
+  const hasChatWidget = chatWidgetSelectors.some(selector => 
+    $(selector).length > 0
+  );
+  
+  // 12. JOBS / CAREERS (SEO - shows growth)
+  const hasJobsPage = 
+    $('a[href*="career"], a[href*="jobs"], a[href*="hiring"]').length > 0 ||
+    /we're\s+hiring|join\s+our\s+team|open\s+positions/i.test(pageText);
+  
+  // 13. METRICS / NUMBERS (Social Proof)
+  const metricsPatterns = [
+    /(\d+[,.]?\d*[kmb]?\+?)\s*(users|customers|companies|downloads)/i,
+    /(\d+[,.]?\d*)\s*%\s*(faster|more|increase|growth)/i,
+    /(\d+[,.]?\d*[kmb]?)\s*\+?\s*(reviews|ratings|stars)/i
+  ];
+  
+  const metrics = [];
+  metricsPatterns.forEach(pattern => {
+    const matches = pageText.match(pattern);
+    if (matches) metrics.push(matches[0]);
+  });
+  
+  const hasMetrics = metrics.length > 0;
+  
+  // 14. COMPARISON TABLE (Value Proposition)
+  const hasComparisonTable = 
+    /vs\s+\w+|compare|alternative\s+to|better\s+than/i.test(pageText) ||
+    $('table').length > 0 && /competitor|alternative|comparison/i.test(pageText);
+  
+  return {
+    // Pricing
+    hasPricing,
+    pricingPageLink,
+    pricingVisible,
+    
+    // Trial & Demo
+    hasFreeTrial,
+    trialLength,
+    hasDemo,
+    hasDemoVideo,
+    
+    // Social Proof
+    hasCustomerLogos,
+    customerLogoCount,
+    hasBrandNames,
+    hasMediaMentions,
+    mediaCount,
+    hasAwards,
+    hasMetrics,
+    metrics: metrics.slice(0, 3),
+    
+    // Product
+    hasScreenshot,
+    hasFeatureList,
+    featureListCount,
+    hasUseCases,
+    useCaseMatches: useCaseMatches.slice(0, 3),
+    hasComparisonTable,
+    
+    // Team & Company
+    hasTeamSection,
+    hasFounderInfo,
+    hasFundingInfo,
+    
+    // Modern Features
+    hasChatWidget,
+    hasJobsPage,
   };
 }
 

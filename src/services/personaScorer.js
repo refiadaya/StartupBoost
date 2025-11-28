@@ -214,55 +214,55 @@ function scoreContentQualitySeeker(signals, aiAnalysis) {
   // AI-POWERED SCORING
   
   // Readability (25 points)
-  const readabilityScore = aiAnalysis.readability.score;
+  const readabilityScore = aiAnalysis?.readability?.score || 5;
   if (readabilityScore >= 8) {
     score += 25;
-    insights.push(`✓ Excellent readability (${readabilityScore}/10): ${aiAnalysis.readability.explanation}`);
+    insights.push(`✓ Excellent readability (${readabilityScore}/10): ${aiAnalysis?.readability?.explanation || 'Clear and engaging'}`);
   } else if (readabilityScore >= 6) {
     score += 18;
-    insights.push(`⚠ Good readability (${readabilityScore}/10): ${aiAnalysis.readability.explanation}`);
+    insights.push(`⚠ Good readability (${readabilityScore}/10): ${aiAnalysis?.readability?.explanation || 'Acceptable clarity'}`);
   } else {
     score += 10;
-    insights.push(`✗ Poor readability (${readabilityScore}/10): ${aiAnalysis.readability.explanation}`);
+    insights.push(`✗ Poor readability (${readabilityScore}/10): ${aiAnalysis?.readability?.explanation || 'Could be clearer'}`);
   }
 
   // Informativeness (30 points)
-  const informativenessScore = aiAnalysis.informativeness.score;
+  const informativenessScore = aiAnalysis?.informativeness?.score || 5;
   if (informativenessScore >= 8) {
     score += 30;
-    insights.push(`✓ Highly informative (${informativenessScore}/10): ${aiAnalysis.informativeness.explanation}`);
+    insights.push(`✓ Highly informative (${informativenessScore}/10): ${aiAnalysis?.informativeness?.explanation || 'Rich content'}`);
   } else if (informativenessScore >= 6) {
     score += 20;
-    insights.push(`⚠ Moderately informative (${informativenessScore}/10): ${aiAnalysis.informativeness.explanation}`);
+    insights.push(`⚠ Moderately informative (${informativenessScore}/10): ${aiAnalysis?.informativeness?.explanation || 'Adequate information'}`);
   } else {
     score += 10;
-    insights.push(`✗ Low informativeness (${informativenessScore}/10): ${aiAnalysis.informativeness.explanation}`);
+    insights.push(`✗ Low informativeness (${informativenessScore}/10): ${aiAnalysis?.informativeness?.explanation || 'Limited depth'}`);
   }
 
   // Engagement (25 points)
-  const engagementScore = aiAnalysis.engagement.score;
+  const engagementScore = aiAnalysis?.engagement?.score || 5;
   if (engagementScore >= 8) {
     score += 25;
-    insights.push(`✓ Highly engaging (${engagementScore}/10): ${aiAnalysis.engagement.explanation}`);
+    insights.push(`✓ Highly engaging (${engagementScore}/10): ${aiAnalysis?.engagement?.explanation || 'Captivating content'}`);
   } else if (engagementScore >= 6) {
     score += 18;
-    insights.push(`⚠ Moderately engaging (${engagementScore}/10): ${aiAnalysis.engagement.explanation}`);
+    insights.push(`⚠ Moderately engaging (${engagementScore}/10): ${aiAnalysis?.engagement?.explanation || 'Holds attention'}`);
   } else {
     score += 10;
-    insights.push(`✗ Not very engaging (${engagementScore}/10): ${aiAnalysis.engagement.explanation}`);
+    insights.push(`✗ Not very engaging (${engagementScore}/10): ${aiAnalysis?.engagement?.explanation || 'Could be more compelling'}`);
   }
 
   // Uniqueness (20 points)
-  const uniquenessScore = aiAnalysis.uniqueness.score;
+  const uniquenessScore = aiAnalysis?.uniqueness?.score || 5;
   if (uniquenessScore >= 8) {
     score += 20;
-    insights.push(`✓ Unique content (${uniquenessScore}/10): ${aiAnalysis.uniqueness.explanation}`);
+    insights.push(`✓ Unique content (${uniquenessScore}/10): ${aiAnalysis?.uniqueness?.explanation || 'Distinctive value'}`);
   } else if (uniquenessScore >= 6) {
     score += 12;
-    insights.push(`⚠ Somewhat unique (${uniquenessScore}/10): ${aiAnalysis.uniqueness.explanation}`);
+    insights.push(`⚠ Somewhat unique (${uniquenessScore}/10): ${aiAnalysis?.uniqueness?.explanation || 'Some differentiation'}`);
   } else {
     score += 5;
-    insights.push(`✗ Common content (${uniquenessScore}/10): ${aiAnalysis.uniqueness.explanation}`);
+    insights.push(`✗ Common content (${uniquenessScore}/10): ${aiAnalysis?.uniqueness?.explanation || 'Similar to others'}`);
   }
 
   return {

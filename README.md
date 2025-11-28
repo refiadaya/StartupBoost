@@ -97,58 +97,190 @@ curl -X POST http://localhost:3000/api/analyze \
 {
   "success": true,
   "url": "https://example.com",
+  "mainCriteria": {
+    "valueProposition": {
+      "score": 7,
+      "breakdown": { "technical": 3, "ai": 6 },
+      "analysis": {
+        "strengths": ["Clear H1 heading", "Benefit-focused language"],
+        "weaknesses": ["Could be more specific"],
+        "aiInsight": "Value proposition is clear but could emphasize unique benefits more",
+        "suggestion": "Highlight what makes you different from competitors"
+      }
+    },
+    "ctaStrength": { "score": 8, "breakdown": {...}, "analysis": {...} },
+    "socialProof": { "score": 6, "breakdown": {...}, "analysis": {...} },
+    "visualReadability": { "score": 7, "breakdown": {...}, "analysis": {...} },
+    "seoDiscoverability": { "score": 8, "breakdown": {...}, "analysis": {...} }
+  },
   "signals": {
-    "headings": { ... },
-    "ctas": { ... },
-    "contactInfo": { ... },
-    "socialMedia": { ... },
-    "trustSignals": { ... },
-    "adsAndAnnoyances": { ... },
-    "seo": { ... },
-    "blogFeatures": { ... }
+    "headings": { "h1": [...], "h2": [...], "h3": [...] },
+    "ctas": [...],
+    "contactInfo": { "email": true, "phone": false, "address": false },
+    "socialMedia": { "hasLinks": true, "count": 3 },
+    "trustSignals": { "hasHttps": true, "hasPrivacyPolicy": true },
+    "startupSignals": {
+      "hasPricing": true,
+      "hasFreeTrial": true,
+      "hasCustomerLogos": true,
+      "hasMediaMentions": true,
+      "hasMetrics": true,
+      "hasTeamSection": true
+    },
+    "textContent": {
+      "wordCount": 543,
+      "valueProposition": "...",
+      "headingsSummary": "..."
+    }
   },
   "aiAnalysis": {
-    "readability": { "score": 8, "explanation": "..." },
-    "informativeness": { "score": 7, "explanation": "..." },
-    "engagement": { "score": 9, "explanation": "..." },
-    "uniqueness": { "score": 6, "explanation": "..." },
+    "success": true,
+    "valueProposition": { "score": 7, "explanation": "...", "strengths": [...], "weaknesses": [...] },
+    "ctaStrength": { "score": 8, "explanation": "..." },
+    "socialProof": { "score": 6, "explanation": "..." },
+    "readability": { "score": 7, "explanation": "..." },
     "seoQuality": { "score": 8, "explanation": "..." },
-    "overallQuality": { "score": 8, "explanation": "..." },
-    "topSuggestions": ["...", "...", "..."]
-  },
-  "personas": {
-    "impatientUser": { "score": 85, "insights": [...] },
-    "skepticalUser": { "score": 70, "insights": [...] },
-    "contentQualitySeeker": { "score": 82, "insights": [...] },
-    "adHater": { "score": 95, "insights": [...] },
-    "seoOptimizer": { "score": 78, "insights": [...] }
+    "pythonReadability": {
+      "success": false  // true if Python service running
+      // When true: includes fleschReadingEase, difficulty, recommendation
+    }
   }
 }
 ```
 
 ---
 
-## 🎓 Understanding the Scores
+## 🎓 How the 5 Criteria Are Analyzed
 
-### **Content Quality Seeker** (AI-Powered)
-- **25 pts**: Readability (8+ = excellent)
-- **30 pts**: Informativeness (8+ = highly informative)
-- **25 pts**: Engagement (8+ = very engaging)
-- **20 pts**: Uniqueness (8+ = unique content)
+Each criterion uses a **hybrid scoring approach** combining technical signals, Python analysis (optional), and AI evaluation:
 
-### **Ad-Hater**
-- Starts at 100 pts, deducts for:
-  - Ad iframes: -10 pts each
-  - Auto-play videos: -20 pts
-  - Popups: -15 pts
-  - Cookie banners: -5 pts
+### **1️⃣ Value Proposition Clarity (0-10)**
+**Weight:** 40% Technical + 60% AI
 
-### **SEO Optimizer** (AI-Enhanced)
-- **30 pts**: Meta tags (title, description, keywords, viewport)
-- **20 pts**: Open Graph tags
-- **10 pts**: Structured data
-- **15 pts**: Heading structure
-- **20 pts**: AI keyword quality analysis
+**Technical Signals (4 points):**
+- ✅ H1 heading present and scannable (5-100 chars)
+- ✅ Benefit-focused keywords (save, grow, boost, help, solve, easy, fast)
+- ✅ Value prop visible in first section (20+ chars)
+- ✅ Meta description exists (50+ chars)
+- 🆕 **Startup Bonuses:**
+  - Pricing transparency visible (+0.5)
+  - Product screenshots/demo video (+0.5)
+  - Use cases shown (+0.5)
+  - Feature list present (+0.5)
+
+**AI Analysis (6 points):**
+- 🤖 Evaluates clarity and uniqueness
+- 🤖 Checks benefit articulation
+- 🤖 Assesses target audience clarity
+- 🤖 Provides strengths, weaknesses, and suggestions
+
+**Formula:** `(technical/6.25 * 4) + (aiScore * 0.6)`
+
+---
+
+### **2️⃣ CTA Strength (0-10)**
+**Weight:** 50% Technical + 50% AI
+
+**Technical Signals (5 points):**
+- ✅ Primary CTA button exists
+- ✅ Multiple CTAs for different conversion stages
+- ✅ CTAs visible above the fold
+- ✅ Contrasting colors for visibility
+- ✅ Urgency language (free, now, today, instant)
+- 🆕 **Startup Bonuses:**
+  - Free trial offer (+1 point)
+  - Demo available (+0.5)
+  - Chat widget present (+0.5)
+
+**AI Analysis (5 points):**
+- 🤖 CTA clarity and action-oriented language
+- 🤖 Urgency and value communication
+- 🤖 CTA placement and visual hierarchy
+- 🤖 Persuasiveness evaluation
+
+**Formula:** `(technical/7 * 5) + (aiScore * 0.5)`
+
+---
+
+### **3️⃣ Social Proof & Trust (0-10)**
+**Weight:** 40% Technical + 60% AI
+
+**Technical Signals (4 points):**
+- ✅ HTTPS enabled
+- ✅ Privacy policy link
+- ✅ Contact information visible
+- ✅ Testimonials present
+- 🆕 **Startup Bonuses:**
+  - Customer logos displayed (+0.75)
+  - Brand names mentioned (+0.75)
+  - Media mentions (+0.75)
+  - Metrics/numbers shown (+0.5)
+  - Team/About section (+0.5)
+  - Funding information (+0.5)
+  - Awards/recognition (+0.5)
+
+**AI Analysis (6 points):**
+- 🤖 Credibility of testimonials
+- 🤖 Authority and trust signals quality
+- 🤖 Social proof authenticity vs quantity
+- 🤖 Brand perception
+
+**Formula:** `(technical/8 * 4) + (aiScore * 0.6)`
+
+---
+
+### **4️⃣ Visual Readability (0-10)**
+**Weight:** 30% Technical + 70% AI/Python
+
+**Technical Signals (3 points):**
+- ✅ Word count (100+ words = sufficient content)
+- ✅ Scannable length (50-2000 words optimal)
+- ✅ Heading hierarchy (H1, H2, H3 structure)
+- ✅ Visual elements (1-10 images for breaks)
+
+**AI Analysis (7 points):**
+- 🤖 Sentence complexity evaluation
+- 🤖 Paragraph structure assessment
+- 🤖 Whitespace and scannability
+- 🤖 Readability recommendation
+
+**Python Enhancement (optional):**
+- 🐍 Flesch-Kincaid Reading Ease score (0-100)
+- 🐍 Average sentence length metrics
+- 🐍 Syllables per word count
+- 🐍 Difficulty level (Very Easy → Very Hard)
+- *Note: Falls back to AI-only if Python unavailable*
+
+**Formula:** `(technical/3 * 3) + (readabilityScore * 0.7)`
+
+---
+
+### **5️⃣ SEO & Discoverability (0-10)**
+**Weight:** 40% Technical + 60% AI
+
+**Technical Signals (4 points):**
+- ✅ Title tag exists (30-60 chars optimal)
+- ✅ Meta description (100-160 chars)
+- ✅ H1-H6 heading structure
+- ✅ Image alt tags present
+
+**AI Analysis (6 points):**
+- 🤖 Keyword strategy evaluation
+- 🤖 Content structure for SEO
+- 🤖 Semantic relevance
+- 🤖 Search intent alignment
+
+**Formula:** `(technical/4 * 4) + (aiScore * 0.6)`
+
+---
+
+## 🔑 Key Features
+
+- **60+ Technical Signals** extracted from HTML/CSS
+- **14 Startup-Specific Signals** (pricing, trials, logos, media, metrics)
+- **Temperature=0 AI** for consistent, deterministic scoring
+- **Graceful Degradation** - works without Python (AI compensates)
+- **FREE Gemini API** - no cost for AI analysis
 
 ---
 

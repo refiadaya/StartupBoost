@@ -12,9 +12,16 @@ function initializeAI() {
   
   try {
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    // Use gemini-2.0-flash (fast and free)
-    model = genAI.getGenerativeModel({ model: "models/gemini-2.0-flash" });
-    console.log('✅ AI analyzer initialized with Gemini 2.0 Flash');
+    // Use gemini-2.0-flash (fast and free) with temperature=0 for consistent scoring
+    model = genAI.getGenerativeModel({ 
+      model: "models/gemini-2.0-flash",
+      generationConfig: {
+        temperature: 0,  // Makes responses deterministic (same input → same output)
+        topP: 1,
+        topK: 1
+      }
+    });
+    console.log('✅ AI analyzer initialized with Gemini 2.0 Flash (deterministic mode)');
     return true;
   } catch (error) {
     console.error('❌ Failed to initialize AI:', error.message);
@@ -33,49 +40,94 @@ async function analyzeContentQuality(textContent, url, signals) {
   }
 
   try {
-    const prompt = `You are a website quality analyzer. Analyze this website and provide scores based on these criteria:
+    const ctas = signals.callsToAction || [];
+    const startup = signals.startupSignals || {};
+    
+    const prompt = `You are a professional website analyzer for startups. Analyze this website across 5 key criteria.
 
 URL: ${url}
 
-Website Content Summary:
+BASIC WEBSITE DATA:
 - Title: ${signals.metadata.title || 'No title'}
+- H1: ${signals.headings.h1.join(', ') || 'No H1'}
 - Main headings: ${textContent.headingsSummary}
-- Value proposition: ${textContent.valueProposition}
+- Value proposition: ${textContent.valueProposition || 'Not clear'}
 - Word count: ${textContent.wordCount}
 
-Full content preview (first 3000 chars):
-${textContent.fullText.substring(0, 3000)}
+CALL-TO-ACTION DATA:
+- CTAs found: ${ctas.join(', ') || 'None'}
+- Has free trial: ${startup.hasFreeTrial ? 'Yes' + (startup.trialLength ? ` (${startup.trialLength} days)` : '') : 'No'}
+- Has demo: ${startup.hasDemo ? 'Yes' : 'No'}
+- Has chat widget: ${startup.hasChatWidget ? 'Yes' : 'No'}
 
-Please analyze and rate the following (use EXACTLY this JSON format):
+SOCIAL PROOF DATA:
+- Has testimonials: ${signals.trustSignals.hasTestimonials ? 'Yes' : 'No'}
+- Has customer logos: ${startup.hasCustomerLogos ? `Yes (${startup.customerLogoCount} logos)` : 'No'}
+- Brand names mentioned: ${startup.hasBrandNames ? 'Yes' : 'No'}
+- Media mentions: ${startup.hasMediaMentions ? `Yes (${startup.mediaCount} outlets)` : 'No'}
+- Has metrics: ${startup.hasMetrics ? `Yes (${startup.metrics.join(', ')})` : 'No'}
+- Team section: ${startup.hasTeamSection ? 'Yes' : 'No'}
+- Funding info: ${startup.hasFundingInfo ? 'Yes' : 'No'}
+- Awards: ${startup.hasAwards ? 'Yes' : 'No'}
+
+PRODUCT & VALUE PROP DATA:
+- Has pricing page: ${startup.hasPricing ? 'Yes' : 'No'}
+- Pricing visible on homepage: ${startup.pricingVisible ? 'Yes' : 'No'}
+- Product screenshot: ${startup.hasScreenshot ? 'Yes' : 'No'}
+- Demo video: ${startup.hasDemoVideo ? 'Yes' : 'No'}
+- Feature list: ${startup.hasFeatureList ? 'Yes' : 'No'}
+- Use cases defined: ${startup.hasUseCases ? 'Yes' : 'No'}
+- Comparison table: ${startup.hasComparisonTable ? 'Yes' : 'No'}
+
+SEO & TRUST DATA:
+- Has HTTPS: ${signals.trustSignals.hasHttps ? 'Yes' : 'No'}
+- Meta description: ${signals.metadata.description ? 'Yes' : 'No'}
+- Open Graph tags: ${signals.seo.openGraphTags?.ogTitle ? 'Yes' : 'No'}
+- Jobs/Careers page: ${startup.hasJobsPage ? 'Yes' : 'No'}
+
+Content preview (first 2500 chars):
+${textContent.fullText.substring(0, 2500)}
+
+Analyze and provide scores for these 5 STARTUP-SPECIFIC criteria (use EXACTLY this JSON format):
+
 {
+  "valueProposition": {
+    "score": <1-10>,
+    "explanation": "<Is it immediately clear what this product does, who it's for, and why it matters? Consider: product clarity, target audience, differentiation, pricing transparency>",
+    "strengths": ["<what works well>", "<another strength>"],
+    "weaknesses": ["<what's missing>", "<another weakness>"],
+    "suggestion": "<one specific improvement>"
+  },
+  "ctaStrength": {
+    "score": <1-10>,
+    "explanation": "<Are CTAs clear, action-oriented, and compelling? Consider: action verbs, urgency, value communication, free trial/demo offers, multiple touchpoints>",
+    "strengths": ["<strength 1>", "<strength 2>"],
+    "weaknesses": ["<weakness 1>", "<weakness 2>"],
+    "suggestion": "<specific CTA improvement>"
+  },
+  "socialProof": {
+    "score": <1-10>,
+    "explanation": "<Is credibility established? Consider: authentic testimonials, customer logos, brand names, media mentions, metrics/numbers, team visibility, funding/awards>",
+    "strengths": ["<trust element 1>", "<trust element 2>"],
+    "weaknesses": ["<missing trust signal>", "<another missing>"],
+    "suggestion": "<how to build more credibility>"
+  },
   "readability": {
     "score": <1-10>,
-    "explanation": "<brief explanation>"
-  },
-  "informativeness": {
-    "score": <1-10>,
-    "explanation": "<does it provide valuable, useful information?>"
-  },
-  "engagement": {
-    "score": <1-10>,
-    "explanation": "<is it interesting and compelling?>"
-  },
-  "uniqueness": {
-    "score": <1-10>,
-    "explanation": "<is this information unique or commonly available elsewhere?>"
+    "explanation": "<Is content scannable and easy to digest? Consider: heading hierarchy, sentence length, visual structure, white space, feature lists>",
+    "suggestion": "<layout improvement>"
   },
   "seoQuality": {
     "score": <1-10>,
-    "explanation": "<are keywords well-targeted and relevant?>"
-  },
-  "overallQuality": {
-    "score": <1-10>,
-    "explanation": "<overall assessment>"
+    "explanation": "<Is the site optimized for discovery? Consider: meta tags, keyword integration, search intent alignment, unique ranking opportunities, content freshness>",
+    "strengths": ["<SEO strength>"],
+    "weaknesses": ["<SEO weakness>"],
+    "suggestion": "<SEO improvement>"
   },
   "topSuggestions": [
-    "<suggestion 1>",
-    "<suggestion 2>",
-    "<suggestion 3>"
+    "<highest priority improvement>",
+    "<second priority>",
+    "<third priority>"
   ]
 }
 

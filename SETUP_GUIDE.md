@@ -21,7 +21,7 @@
 Open the `.env` file in the project root and replace the placeholder:
 
 ```bash
-GEMINI_API_KEY=AIzaSyB2j8Vl0TFZKb2AY0-Olk3m8FK1_E0awJ4
+GEMINI_API_KEY=´your_api_key´
 PORT=3000
 ```
 

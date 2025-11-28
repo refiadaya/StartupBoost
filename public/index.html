@@ -342,7 +342,7 @@
     <div class="container">
         <div class="header">
             <h1>🚀 StartupBoost</h1>
-            <p>AI-Powered Website Analyzer - Get instant insights from 5 expert perspectives</p>
+            <p>AI-Powered Startup Website Analyzer - Score your site on 5 key criteria</p>
         </div>
 
         <div class="input-section">
@@ -377,13 +377,18 @@
             </div>
 
             <div class="section">
-                <h3>🤖 AI Content Analysis <span class="badge badge-success" id="aiStatus">AI Enabled</span></h3>
-                <div class="ai-scores" id="aiScores"></div>
-                <div class="suggestions" id="suggestions"></div>
+                <h3>📊 Main Startup Criteria <span class="badge badge-success" id="aiStatus">AI-Powered</span></h3>
+                <p style="color: #666; margin-bottom: 20px;">Your site scored on the 5 most important startup metrics</p>
+                <div class="ai-scores" id="mainCriteria"></div>
             </div>
 
             <div class="section">
-                <h3>👥 Persona Scores</h3>
+                <h3>📋 Detailed Analysis</h3>
+                <div id="detailedAnalysis"></div>
+            </div>
+
+            <div class="section" style="display: none;" id="personaSection">
+                <h3>👥 Persona Scores (Optional)</h3>
                 <p style="color: #666; margin-bottom: 20px;">How your website performs for different user types</p>
                 <div class="personas" id="personas"></div>
             </div>
@@ -446,49 +451,109 @@
             
             analyzedUrl.textContent = data.url;
             
-            // Display AI scores
-            displayAIScores(data.aiAnalysis);
+            // Display main criteria (new primary display)
+            displayMainCriteria(data.mainCriteria, data.aiAnalysis);
             
-            // Display personas
-            displayPersonas(data.personas);
+            // Display personas (optional)
+            // displayPersonas(data.personas);
             
             results.classList.add('active');
         }
 
-        function displayAIScores(aiAnalysis) {
-            const aiScores = document.getElementById('aiScores');
-            const suggestions = document.getElementById('suggestions');
+        function displayMainCriteria(mainCriteria, aiAnalysis) {
+            const mainCriteriaDiv = document.getElementById('mainCriteria');
+            const detailedAnalysis = document.getElementById('detailedAnalysis');
             const aiStatus = document.getElementById('aiStatus');
 
             if (!aiAnalysis.success) {
                 aiStatus.className = 'badge badge-warning';
-                aiStatus.textContent = 'AI Fallback Mode';
+                aiStatus.textContent = 'Technical Analysis';
             }
 
-            const scores = [
-                { label: 'Readability', value: aiAnalysis.readability.score, icon: '📖' },
-                { label: 'Informativeness', value: aiAnalysis.informativeness.score, icon: '📚' },
-                { label: 'Engagement', value: aiAnalysis.engagement.score, icon: '✨' },
-                { label: 'Uniqueness', value: aiAnalysis.uniqueness.score, icon: '🎯' },
-                { label: 'SEO Quality', value: aiAnalysis.seoQuality.score, icon: '🔍' }
+            const criteria = [
+                { 
+                    key: 'valueProposition', 
+                    label: 'Value Proposition', 
+                    icon: '💎',
+                    data: mainCriteria.valueProposition 
+                },
+                { 
+                    key: 'ctaStrength', 
+                    label: 'CTA Strength', 
+                    icon: '🎯',
+                    data: mainCriteria.ctaStrength 
+                },
+                { 
+                    key: 'socialProof', 
+                    label: 'Social Proof', 
+                    icon: '⭐',
+                    data: mainCriteria.socialProof 
+                },
+                { 
+                    key: 'visualReadability', 
+                    label: 'Readability', 
+                    icon: '📖',
+                    data: mainCriteria.visualReadability 
+                },
+                { 
+                    key: 'seoDiscoverability', 
+                    label: 'SEO', 
+                    icon: '🔍',
+                    data: mainCriteria.seoDiscoverability 
+                }
             ];
 
-            aiScores.innerHTML = scores.map(score => `
+            // Display score cards
+            mainCriteriaDiv.innerHTML = criteria.map(c => `
                 <div class="score-card">
-                    <div class="score-label">${score.icon} ${score.label}</div>
-                    <div class="score-value">${score.value}<span class="score-max">/10</span></div>
+                    <div class="score-label">${c.icon} ${c.label}</div>
+                    <div class="score-value">${c.data.score}<span class="score-max">/10</span></div>
                 </div>
             `).join('');
 
-            // Display suggestions
-            if (aiAnalysis.topSuggestions && aiAnalysis.topSuggestions.length > 0) {
-                suggestions.innerHTML = `
-                    <h4>💡 Top Suggestions</h4>
-                    <ul>
-                        ${aiAnalysis.topSuggestions.slice(0, 5).map(s => `<li>${s}</li>`).join('')}
-                    </ul>
-                `;
-            }
+            // Display detailed breakdown
+            detailedAnalysis.innerHTML = criteria.map(c => `
+                <div class="persona-card" style="margin-bottom: 20px;">
+                    <div class="persona-header">
+                        <span class="persona-name">${c.icon} ${c.label}</span>
+                        <span class="persona-score">${c.data.score}/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${c.data.score * 10}%"></div>
+                    </div>
+                    
+                    ${c.data.analysis.aiInsight ? `
+                        <p style="color: #555; margin: 15px 0; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                            <strong>AI Insight:</strong> ${c.data.analysis.aiInsight}
+                        </p>
+                    ` : ''}
+                    
+                    ${c.data.analysis.strengths && c.data.analysis.strengths.length > 0 ? `
+                        <div style="margin: 10px 0;">
+                            <strong style="color: #28a745;">✓ Strengths:</strong>
+                            <ul class="persona-insights">
+                                ${c.data.analysis.strengths.map(s => `<li style="color: #28a745;">${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${c.data.analysis.weaknesses && c.data.analysis.weaknesses.length > 0 ? `
+                        <div style="margin: 10px 0;">
+                            <strong style="color: #dc3545;">⚠ Needs Improvement:</strong>
+                            <ul class="persona-insights">
+                                ${c.data.analysis.weaknesses.map(w => `<li style="color: #dc3545;">${w}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${c.data.analysis.suggestion ? `
+                        <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                            <strong style="color: #856404;">💡 Suggestion:</strong>
+                            <p style="color: #856404; margin: 5px 0 0 0;">${c.data.analysis.suggestion}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
         }
 
         function displayPersonas(personas) {
