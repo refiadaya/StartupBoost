@@ -3,6 +3,8 @@ const { fetchPage } = require('../services/pageFetcher');
 const { extractSignals } = require('../services/signalExtractor');
 const { scorePersonas } = require('../services/personaScorer');
 const { analyzeContentQuality } = require('../services/aiAnalyzer');
+const { scoreMainCriteria } = require('../services/mainCriteriaScorer');
+const { analyzeReadability, analyzeKeywords } = require('../services/pythonClient');
 
 const router = express.Router();
 
@@ -49,7 +51,28 @@ router.post('/analyze', async (req, res) => {
       signals
     );
 
-    // Score personas (now with AI insights available)
+    // Python Analysis (optional - runs in parallel)
+    console.log('🐍 Running Python analysis...');
+    const [pythonReadability, pythonKeywords] = await Promise.all([
+      analyzeReadability(signals.textContent.fullText),
+      analyzeKeywords(signals.textContent.fullText)
+    ]);
+
+    // Add Python results to AI analysis if available
+    if (pythonReadability.success) {
+      aiAnalysis.pythonReadability = pythonReadability;
+      console.log(`✅ Python readability: ${pythonReadability.fleschReadingEase} (${pythonReadability.difficulty})`);
+    }
+    
+    if (pythonKeywords.success) {
+      aiAnalysis.pythonKeywords = pythonKeywords;
+      console.log(`✅ Python keywords: ${pythonKeywords.topKeywords?.length || 0} analyzed`);
+    }
+
+    // Score main criteria (new 5-criteria system)
+    const mainCriteria = scoreMainCriteria(signals, aiAnalysis);
+
+    // Score personas (optional secondary analysis)
     const personas = scorePersonas(signals, aiAnalysis);
 
     // Return the analysis
@@ -58,9 +81,10 @@ router.post('/analyze', async (req, res) => {
       url: finalUrl,
       statusCode,
       analyzedAt: new Date().toISOString(),
-      signals,
-      aiAnalysis,
-      personas,
+      mainCriteria,     // Primary scores (5 criteria)
+      signals,          // Raw data
+      aiAnalysis,       // AI insights
+      personas,         // Secondary persona analysis
     });
 
   } catch (error) {

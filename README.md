@@ -1,45 +1,53 @@
-# Website Analyzer - AI-Powered Edition 🤖
+# StartupBoost - AI-Powered Startup Website Analyzer 🚀
 
-A comprehensive backend tool that analyzes any public website from multiple user personas' perspectives, powered by **FREE Google Gemini AI**.
+A comprehensive full-stack tool that analyzes startup websites across 5 key criteria using **Node.js**, **Python**, and **FREE Google Gemini AI**.
 
 ## 🎯 Overview
 
-This tool fetches a URL, extracts 50+ page signals, and uses AI to evaluate content quality based on:
-- **Readability** - How easy is the text to read?
-- **Informativeness** - Does it provide valuable information?
-- **Engagement** - Is the content interesting and compelling?
-- **Uniqueness** - Is this information special or commonly available?
-- **SEO Quality** - Are keywords well-targeted?
+This tool combines technical signal extraction, Python-powered readability analysis, and AI semantic understanding to score startup websites on:
+
+### **5 Main Criteria:**
+1. **💎 Value Proposition** - Is it clear what the product does and who it's for?
+2. **🎯 CTA Strength** - Are calls-to-action compelling and action-oriented?
+3. **⭐ Social Proof** - Does the site establish credibility and trust?
+4. **📖 Visual Readability** - Is content scannable and easy to digest?
+5. **🔍 SEO & Discoverability** - Is the site optimized for search engines?
+
+## 🛠️ Tech Stack
+
+- **Backend:** Node.js + Express
+- **Analysis:** Python (Flask) + Gemini AI (FREE)
+- **NLP:** Python textstat for Flesch-Kincaid readability
+- **Frontend:** HTML/CSS/JavaScript (Single-page)
 
 ## ✨ Features
 
-### **Technical Signal Detection (50+ signals)**
-- ✅ Trust & Security (HTTPS, privacy policy, security badges)
-- ✅ Social Media Links (Facebook, Twitter, LinkedIn, Instagram, YouTube, TikTok)
-- ✅ Contact Information (email, phone, address, contact forms)
-- ✅ Ads & Annoyances (popups, auto-play videos, ad iframes)
-- ✅ SEO Elements (meta tags, Open Graph, structured data)
-- ✅ Blog Features (search, categories, tags, comments)
-- ✅ Content Metrics (paragraphs, images, links, videos)
-
-### **AI-Powered Content Analysis** (FREE with Gemini)
-- 🤖 Readability scoring and insights
-- 🤖 Informativeness evaluation
-- 🤖 Engagement level analysis
-- 🤖 Uniqueness detection
-- 🤖 SEO quality assessment
-- 🤖 Improvement suggestions
-
-### **5 User Personas**
-1. **Impatient User** - Wants quick value, clear CTAs
-2. **Skeptical User** - Looks for trust signals
-3. **Content Quality Seeker** (AI-Powered) - Values readability, informativeness, engagement
-4. **Ad-Hater** - Wants clean, distraction-free experience
-5. **SEO Optimizer** (AI-Enhanced) - Cares about search visibility
+### **Multi-Layer Analysis:**
+- ✅ **Technical Signals** (60+ startup-specific signals)
+  - Pricing transparency, free trials, customer logos
+  - Media mentions, team visibility, funding info
+  - Product screenshots, demo availability
+  - Trust signals, contact info, social media
+  
+- ✅ **Python Analysis** (Microservice on port 5000)
+  - Flesch-Kincaid readability scoring
+  - Keyword density and SEO analysis
+  - Sentence/word complexity metrics
+  
+- ✅ **AI Analysis** (Gemini 2.0 Flash - FREE)
+  - Semantic content understanding
+  - Buzzword detection
+  - Value proposition clarity
+  - CTA persuasiveness evaluation
 
 ---
 
 ## 🚀 Quick Start
+
+### **Prerequisites:**
+- Node.js 16+ 
+- Python 3.8+ (optional but recommended)
+- Google Gemini API Key (FREE)
 
 ### **Step 1: Get FREE Gemini API Key**
 
