@@ -1,15 +1,150 @@
-# Website Analyzer
+# Website Analyzer - AI-Powered Edition 🤖
 
-A simple backend tool that analyzes any public website from different user personas' perspectives.
+A comprehensive backend tool that analyzes any public website from multiple user personas' perspectives, powered by **FREE Google Gemini AI**.
 
-## Overview
+## 🎯 Overview
 
-This tool fetches a URL, extracts key page signals (headings, CTAs, contact info, etc.), and evaluates the page from the perspective of different user personas:
+This tool fetches a URL, extracts 50+ page signals, and uses AI to evaluate content quality based on:
+- **Readability** - How easy is the text to read?
+- **Informativeness** - Does it provide valuable information?
+- **Engagement** - Is the content interesting and compelling?
+- **Uniqueness** - Is this information special or commonly available?
+- **SEO Quality** - Are keywords well-targeted?
 
-- **Impatient User**: Wants quick value, clear CTAs, and easy-to-scan content
-- **Skeptical User**: Looks for trust signals, contact information, and credibility
+## ✨ Features
 
-## Project Structure
+### **Technical Signal Detection (50+ signals)**
+- ✅ Trust & Security (HTTPS, privacy policy, security badges)
+- ✅ Social Media Links (Facebook, Twitter, LinkedIn, Instagram, YouTube, TikTok)
+- ✅ Contact Information (email, phone, address, contact forms)
+- ✅ Ads & Annoyances (popups, auto-play videos, ad iframes)
+- ✅ SEO Elements (meta tags, Open Graph, structured data)
+- ✅ Blog Features (search, categories, tags, comments)
+- ✅ Content Metrics (paragraphs, images, links, videos)
+
+### **AI-Powered Content Analysis** (FREE with Gemini)
+- 🤖 Readability scoring and insights
+- 🤖 Informativeness evaluation
+- 🤖 Engagement level analysis
+- 🤖 Uniqueness detection
+- 🤖 SEO quality assessment
+- 🤖 Improvement suggestions
+
+### **5 User Personas**
+1. **Impatient User** - Wants quick value, clear CTAs
+2. **Skeptical User** - Looks for trust signals
+3. **Content Quality Seeker** (AI-Powered) - Values readability, informativeness, engagement
+4. **Ad-Hater** - Wants clean, distraction-free experience
+5. **SEO Optimizer** (AI-Enhanced) - Cares about search visibility
+
+---
+
+## 🚀 Quick Start
+
+### **Step 1: Get FREE Gemini API Key**
+
+1. Go to https://ai.google.dev/
+2. Click "Get API Key in Google AI Studio"
+3. Sign in with your Google account
+4. Click "Create API Key"
+5. Copy your key (starts with `AIza...`)
+
+### **Step 2: Configure API Key**
+
+Open `.env` file and add your key:
+```bash
+GEMINI_API_KEY=your_actual_api_key_here
+PORT=3000
+```
+
+### **Step 3: Install & Run**
+
+```bash
+# Install dependencies (already done)
+npm install
+
+# Start the server
+npm run dev
+```
+
+Server runs at `http://localhost:3000`
+
+---
+
+## 📖 API Usage
+
+### **Analyze a Website**
+
+**Endpoint:** `POST /api/analyze`
+
+**Request:**
+```bash
+curl -X POST http://localhost:3000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}'
+```
+
+**Response includes:**
+```json
+{
+  "success": true,
+  "url": "https://example.com",
+  "signals": {
+    "headings": { ... },
+    "ctas": { ... },
+    "contactInfo": { ... },
+    "socialMedia": { ... },
+    "trustSignals": { ... },
+    "adsAndAnnoyances": { ... },
+    "seo": { ... },
+    "blogFeatures": { ... }
+  },
+  "aiAnalysis": {
+    "readability": { "score": 8, "explanation": "..." },
+    "informativeness": { "score": 7, "explanation": "..." },
+    "engagement": { "score": 9, "explanation": "..." },
+    "uniqueness": { "score": 6, "explanation": "..." },
+    "seoQuality": { "score": 8, "explanation": "..." },
+    "overallQuality": { "score": 8, "explanation": "..." },
+    "topSuggestions": ["...", "...", "..."]
+  },
+  "personas": {
+    "impatientUser": { "score": 85, "insights": [...] },
+    "skepticalUser": { "score": 70, "insights": [...] },
+    "contentQualitySeeker": { "score": 82, "insights": [...] },
+    "adHater": { "score": 95, "insights": [...] },
+    "seoOptimizer": { "score": 78, "insights": [...] }
+  }
+}
+```
+
+---
+
+## 🎓 Understanding the Scores
+
+### **Content Quality Seeker** (AI-Powered)
+- **25 pts**: Readability (8+ = excellent)
+- **30 pts**: Informativeness (8+ = highly informative)
+- **25 pts**: Engagement (8+ = very engaging)
+- **20 pts**: Uniqueness (8+ = unique content)
+
+### **Ad-Hater**
+- Starts at 100 pts, deducts for:
+  - Ad iframes: -10 pts each
+  - Auto-play videos: -20 pts
+  - Popups: -15 pts
+  - Cookie banners: -5 pts
+
+### **SEO Optimizer** (AI-Enhanced)
+- **30 pts**: Meta tags (title, description, keywords, viewport)
+- **20 pts**: Open Graph tags
+- **10 pts**: Structured data
+- **15 pts**: Heading structure
+- **20 pts**: AI keyword quality analysis
+
+---
+
+## 🏗️ Project Structure
 
 ```
 .

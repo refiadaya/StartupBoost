@@ -2,6 +2,7 @@ const express = require('express');
 const { fetchPage } = require('../services/pageFetcher');
 const { extractSignals } = require('../services/signalExtractor');
 const { scorePersonas } = require('../services/personaScorer');
+const { analyzeContentQuality } = require('../services/aiAnalyzer');
 
 const router = express.Router();
 
@@ -36,9 +37,20 @@ router.post('/analyze', async (req, res) => {
 
     // Extract signals
     const signals = extractSignals($);
+    
+    // Add HTTPS check to trust signals
+    signals.trustSignals.hasHttps = finalUrl.startsWith('https://');
 
-    // Score personas
-    const personas = scorePersonas(signals);
+    // AI Analysis (FREE with Gemini!)
+    console.log('🤖 Running AI analysis...');
+    const aiAnalysis = await analyzeContentQuality(
+      signals.textContent,
+      finalUrl,
+      signals
+    );
+
+    // Score personas (now with AI insights available)
+    const personas = scorePersonas(signals, aiAnalysis);
 
     // Return the analysis
     res.json({
@@ -47,6 +59,7 @@ router.post('/analyze', async (req, res) => {
       statusCode,
       analyzedAt: new Date().toISOString(),
       signals,
+      aiAnalysis,
       personas,
     });
 

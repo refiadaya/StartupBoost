@@ -1,9 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const analyzeRoutes = require('./routes/analyze');
+const { initializeAI } = require('./services/aiAnalyzer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Initialize AI on startup
+initializeAI();
 
 // Middleware
 app.use(cors());

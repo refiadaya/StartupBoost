@@ -10,6 +10,12 @@ function extractSignals($) {
     contactInfo: extractContactInfo($),
     content: extractContent($),
     metadata: extractMetadata($),
+    socialMedia: extractSocialMedia($),
+    trustSignals: extractTrustSignals($),
+    adsAndAnnoyances: extractAdsAndAnnoyances($),
+    seo: extractSEO($),
+    blogFeatures: extractBlogFeatures($),
+    textContent: extractTextContent($),
   };
 
   return signals;
@@ -150,6 +156,151 @@ function extractMetadata($) {
     description: $('meta[name="description"]').attr('content') || null,
     hasOgImage: $('meta[property="og:image"]').length > 0,
     hasFavicon: $('link[rel="icon"], link[rel="shortcut icon"]').length > 0,
+  };
+}
+
+/**
+ * Extract social media links
+ */
+function extractSocialMedia($) {
+  const socialPlatforms = {
+    facebook: $('a[href*="facebook.com"]').length > 0,
+    twitter: $('a[href*="twitter.com"], a[href*="x.com"]').length > 0,
+    linkedin: $('a[href*="linkedin.com"]').length > 0,
+    instagram: $('a[href*="instagram.com"]').length > 0,
+    youtube: $('a[href*="youtube.com"]').length > 0,
+    tiktok: $('a[href*="tiktok.com"]').length > 0,
+  };
+
+  const totalLinks = Object.values(socialPlatforms).filter(Boolean).length;
+  const hasSocialShare = $('[class*="share"], [class*="social-share"]').length > 0;
+
+  return {
+    platforms: socialPlatforms,
+    totalPlatforms: totalLinks,
+    hasSocialShareButtons: hasSocialShare,
+  };
+}
+
+/**
+ * Extract trust signals
+ */
+function extractTrustSignals($) {
+  const pageText = $('body').text().toLowerCase();
+  
+  return {
+    hasHttps: true, // Will be set from URL in analyze route
+    hasPrivacyPolicy: $('a[href*="privacy"]').length > 0,
+    hasTermsOfService: $('a[href*="terms"]').length > 0,
+    hasCookieConsent: pageText.includes('cookie') && pageText.includes('consent'),
+    hasSecurityBadges: $('[alt*="secure"], [alt*="ssl"], [alt*="verified"]').length > 0,
+    hasMoneyBackGuarantee: /money.{0,10}back|guarantee/i.test(pageText),
+    hasTestimonials: /testimonial|review|customer\s+says/i.test(pageText),
+    hasCustomerCount: /\d+[,\d]*\+?\s*(customers|users|companies|clients)/i.test(pageText),
+    hasTrustBadges: $('[alt*="bbb"], [alt*="norton"], [alt*="mcafee"]').length > 0,
+  };
+}
+
+/**
+ * Extract ads and annoyance indicators
+ */
+function extractAdsAndAnnoyances($) {
+  const iframes = $('iframe').length;
+  const adKeywordIframes = $('iframe[src*="ads"], iframe[src*="doubleclick"]').length;
+  
+  return {
+    iframeCount: iframes,
+    likelyAdIframes: adKeywordIframes,
+    hasPopups: $('[class*="popup"], [class*="modal"][class*="promo"]').length > 0,
+    hasAutoplayVideo: $('video[autoplay]').length > 0,
+    hasCookieBanner: $('[class*="cookie"], [id*="cookie"]').length > 0,
+    annoyanceScore: adKeywordIframes + ($('video[autoplay]').length * 2),
+  };
+}
+
+/**
+ * Extract SEO elements
+ */
+function extractSEO($) {
+  const metaKeywords = $('meta[name="keywords"]').attr('content');
+  const ogTags = {
+    ogTitle: $('meta[property="og:title"]').attr('content') || null,
+    ogDescription: $('meta[property="og:description"]').attr('content') || null,
+    ogImage: $('meta[property="og:image"]').attr('content') || null,
+    ogUrl: $('meta[property="og:url"]').attr('content') || null,
+  };
+  
+  return {
+    hasMetaKeywords: !!metaKeywords,
+    metaKeywords: metaKeywords || null,
+    hasCanonicalUrl: $('link[rel="canonical"]').length > 0,
+    canonicalUrl: $('link[rel="canonical"]').attr('href') || null,
+    hasStructuredData: $('script[type="application/ld+json"]').length > 0,
+    openGraphTags: ogTags,
+    hasTwitterCard: $('meta[name="twitter:card"]').length > 0,
+    hasViewport: $('meta[name="viewport"]').length > 0,
+  };
+}
+
+/**
+ * Extract blog-specific features
+ */
+function extractBlogFeatures($) {
+  const hasBlogLink = $('a[href*="blog"]').length > 0;
+  const hasSearch = $('input[type="search"], input[name*="search"]').length > 0;
+  const hasCategories = $('[class*="categor"], a[href*="category"]').length > 0;
+  const hasTags = $('[class*="tag"]').length > 0;
+  const hasComments = $('[class*="comment"]').length > 0;
+  
+  // Try to find blog posts
+  const blogPosts = $('article, [class*="post"]');
+  const postTitles = [];
+  blogPosts.slice(0, 5).each((i, el) => {
+    const title = $(el).find('h1, h2, h3').first().text().trim();
+    if (title) postTitles.push(title);
+  });
+  
+  return {
+    hasBlog: hasBlogLink,
+    hasSearch,
+    hasCategories,
+    hasTags,
+    hasComments,
+    postCount: blogPosts.length,
+    recentPostTitles: postTitles,
+  };
+}
+
+/**
+ * Extract text content for AI analysis
+ */
+function extractTextContent($) {
+  // Get main content text
+  const mainText = $('body').text().replace(/\s+/g, ' ').trim();
+  
+  // Get first meaningful paragraph
+  let valueProposition = '';
+  $('p').each((i, el) => {
+    const text = $(el).text().trim();
+    if (text.length > 50 && !valueProposition) {
+      valueProposition = text;
+    }
+  });
+  
+  // Get all headings as a summary
+  const headingsSummary = [];
+  $('h1, h2, h3').each((i, el) => {
+    const text = $(el).text().trim();
+    if (text && headingsSummary.length < 10) {
+      headingsSummary.push(text);
+    }
+  });
+  
+  return {
+    fullText: mainText.substring(0, 5000), // Limit to 5000 chars for AI
+    valueProposition: valueProposition.substring(0, 500),
+    headingsSummary: headingsSummary.join(' | '),
+    wordCount: mainText.split(/\s+/).length,
   };
 }
 
