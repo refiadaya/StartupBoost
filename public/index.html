@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StartupBoost - AI Website Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input[type="url"] {
+            flex: 1;
+            padding: 18px 24px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .analyze-btn {
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .analyze-btn:active {
+            transform: translateY(0);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .results-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .results-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .analyzed-url {
+            color: #667eea;
+            word-break: break-all;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .score-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-max {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .personas {
+            display: grid;
+            gap: 20px;
+        }
+
+        .persona-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .persona-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .persona-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .persona-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 1s ease-out;
+        }
+
+        .persona-insights {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .persona-insights li {
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+
+        .suggestions {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .suggestions h4 {
+            color: #856404;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .suggestions ul {
+            list-style: none;
+        }
+
+        .suggestions li {
+            padding: 8px 0;
+            color: #856404;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .suggestions li:before {
+            content: "💡";
+            flex-shrink: 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .ai-scores {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 StartupBoost</h1>
+            <p>AI-Powered Website Analyzer - Get instant insights from 5 expert perspectives</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <input 
+                    type="url" 
+                    id="urlInput" 
+                    placeholder="Enter website URL (e.g., https://example.com)" 
+                    value="https://stripe.com"
+                />
+                <button class="analyze-btn" id="analyzeBtn" onclick="analyzeWebsite()">
+                    Analyze Website
+                </button>
+            </div>
+            <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
+                💡 Try: stripe.com, airbnb.com, or any website you want to analyze
+            </p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <h3>Analyzing website...</h3>
+            <p style="color: #666; margin-top: 10px;">Our AI is examining the content, SEO, and user experience</p>
+        </div>
+
+        <div class="results" id="results">
+            <div class="results-header">
+                <h2>Analysis Results</h2>
+                <p class="analyzed-url" id="analyzedUrl"></p>
+            </div>
+
+            <div class="section">
+                <h3>🤖 AI Content Analysis <span class="badge badge-success" id="aiStatus">AI Enabled</span></h3>
+                <div class="ai-scores" id="aiScores"></div>
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+
+            <div class="section">
+                <h3>👥 Persona Scores</h3>
+                <p style="color: #666; margin-bottom: 20px;">How your website performs for different user types</p>
+                <div class="personas" id="personas"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/analyze';
+
+        async function analyzeWebsite() {
+            const urlInput = document.getElementById('urlInput');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const error = document.getElementById('error');
+
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            // Reset UI
+            error.classList.remove('active');
+            results.classList.remove('active');
+            loading.classList.add('active');
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = 'Analyzing...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+
+            } catch (err) {
+                showError('Failed to analyze website. Make sure the server is running and the URL is valid.');
+                console.error('Error:', err);
+            } finally {
+                loading.classList.remove('active');
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = 'Analyze Website';
+            }
+        }
+
+        function displayResults(data) {
+            const results = document.getElementById('results');
+            const analyzedUrl = document.getElementById('analyzedUrl');
+            
+            analyzedUrl.textContent = data.url;
+            
+            // Display AI scores
+            displayAIScores(data.aiAnalysis);
+            
+            // Display personas
+            displayPersonas(data.personas);
+            
+            results.classList.add('active');
+        }
+
+        function displayAIScores(aiAnalysis) {
+            const aiScores = document.getElementById('aiScores');
+            const suggestions = document.getElementById('suggestions');
+            const aiStatus = document.getElementById('aiStatus');
+
+            if (!aiAnalysis.success) {
+                aiStatus.className = 'badge badge-warning';
+                aiStatus.textContent = 'AI Fallback Mode';
+            }
+
+            const scores = [
+                { label: 'Readability', value: aiAnalysis.readability.score, icon: '📖' },
+                { label: 'Informativeness', value: aiAnalysis.informativeness.score, icon: '📚' },
+                { label: 'Engagement', value: aiAnalysis.engagement.score, icon: '✨' },
+                { label: 'Uniqueness', value: aiAnalysis.uniqueness.score, icon: '🎯' },
+                { label: 'SEO Quality', value: aiAnalysis.seoQuality.score, icon: '🔍' }
+            ];
+
+            aiScores.innerHTML = scores.map(score => `
+                <div class="score-card">
+                    <div class="score-label">${score.icon} ${score.label}</div>
+                    <div class="score-value">${score.value}<span class="score-max">/10</span></div>
+                </div>
+            `).join('');
+
+            // Display suggestions
+            if (aiAnalysis.topSuggestions && aiAnalysis.topSuggestions.length > 0) {
+                suggestions.innerHTML = `
+                    <h4>💡 Top Suggestions</h4>
+                    <ul>
+                        ${aiAnalysis.topSuggestions.slice(0, 5).map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                `;
+            }
+        }
+
+        function displayPersonas(personas) {
+            const personasDiv = document.getElementById('personas');
+            
+            const personaList = [
+                { key: 'impatientUser', icon: '⚡', name: 'Impatient User' },
+                { key: 'skepticalUser', icon: '🔒', name: 'Skeptical User' },
+                { key: 'contentQualitySeeker', icon: '📖', name: 'Content Quality Seeker' },
+                { key: 'adHater', icon: '🚫', name: 'Ad Hater' },
+                { key: 'seoOptimizer', icon: '🔍', name: 'SEO Optimizer' }
+            ];
+
+            personasDiv.innerHTML = personaList.map(p => {
+                const persona = personas[p.key];
+                return `
+                    <div class="persona-card">
+                        <div class="persona-header">
+                            <span class="persona-name">${p.icon} ${p.name}</span>
+                            <span class="persona-score">${persona.score}/${persona.maxScore}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${persona.percentage}%"></div>
+                        </div>
+                        <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">${persona.description}</p>
+                        <ul class="persona-insights">
+                            ${persona.insights.slice(0, 4).map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.classList.add('active');
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeWebsite();
+            }
+        });
+    </script>
+</body>
+</html>
