@@ -1,4 +1,4 @@
-# 📚 StartupBoost Technical Documentation
+# StartupBoost Technical Documentation
 
 ## Overview
 
@@ -23,7 +23,7 @@ URL Input → Signal Extraction → Criteria Scoring → AI Analysis → Behavio
 
 ### 1. Signal Extractor (`src/services/signalExtractor.js`)
 
-Extracts 100+ signals from websites:
+Extracts various signals from websites:
 
 **Startup Signals:**
 - Pricing information (visibility, free trial, freemium model)

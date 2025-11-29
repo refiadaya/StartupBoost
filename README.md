@@ -283,12 +283,7 @@ For questions or issues:
 - Open an issue on GitHub
 - Email: refia.daya@tum.de
 
-## 📚 Documentation
+## Documentation
 
 For technical details, API reference, and deployment guides, see [DOCUMENTATION.md](./DOCUMENTATION.md)
 
----
-
-**Made with ❤️ for the startup community**
-
-*Analyze. Optimize. Grow.* 🚀
