@@ -1,29 +1,51 @@
 {
-  "name": "website-analyzer",
+  "name": "startupboost",
   "version": "1.0.0",
-  "description": "A tool to analyze websites from different user personas",
-  "main": "src/server.js",
+  "description": "AI-Powered Startup Website Analyzer - Analyze your startup website across 6 critical criteria and behavioral drivers",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [
+    "startup",
     "website",
-    "analysis",
+    "analyzer",
+    "ai",
+    "gemini",
+    "google-ai",
+    "scraping",
+    "seo",
+    "conversion",
+    "behavioral-analysis",
     "personas",
-    "scraping"
+    "value-proposition",
+    "cta",
+    "social-proof"
   ],
-  "author": "",
+  "author": "Refi Adaya <refi.adaya@example.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/refiadaya/StartupBoost.git"
+  },
+  "bugs": {
+    "url": "https://github.com/refiadaya/StartupBoost/issues"
+  },
+  "homepage": "https://github.com/refiadaya/StartupBoost#readme",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "@google/generative-ai": "^0.24.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }

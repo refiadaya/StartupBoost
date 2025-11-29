@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 20%, #3730a3 40%, #1e40af 60%, #1e3a8a 80%, #1e293b 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -64,15 +64,13 @@
             transition: all 0.3s;
         }
 
-        input[type="url"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .analyze-btn {
+    input[type="url"]:focus {
+      outline: none;
+      border-color: #1e40af;
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+    }        .analyze-btn {
             padding: 18px 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3730a3 0%, #1e40af 50%, #1e3a8a 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -82,12 +80,10 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .analyze-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .analyze-btn:active {
+    .analyze-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(30, 64, 175, 0.5);
+    }        .analyze-btn:active {
             transform: translateY(0);
         }
 
@@ -403,8 +399,9 @@
         }
 
         .suggestions li:before {
-            content: "💡";
+            content: "•";
             flex-shrink: 0;
+            font-weight: bold;
         }
 
         .error {
@@ -458,8 +455,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 StartupBoost</h1>
-            <p>AI-Powered Startup Website Analyzer - Score your site on 5 key criteria</p>
+            <h1>StartupBoost</h1>
+            <p>AI-Powered Startup Website Analyzer</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Score your site on 6 key criteria and analyze for 6 behavioral drivers across 3 personas</p>
         </div>
 
         <div class="input-section">
@@ -467,15 +465,15 @@
                 <input 
                     type="url" 
                     id="urlInput" 
-                    placeholder="Enter website URL (e.g., https://example.com)" 
-                    value="https://stripe.com"
+                    placeholder="Enter your startup website URL (e.g., https://yourstartup.com)" 
+                    value=""
                 />
                 <button class="analyze-btn" id="analyzeBtn" onclick="analyzeWebsite()">
                     Analyze Website
                 </button>
             </div>
             <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
-                💡 Try: stripe.com, airbnb.com, or any website you want to analyze
+                Get instant AI-powered insights on your startup's website performance across 6 key criteria
             </p>
         </div>
 
@@ -494,8 +492,8 @@
             </div>
 
             <div class="section">
-                <h3>📊 Main Startup Criteria <span class="badge badge-success" id="aiStatus">AI-Powered</span></h3>
-                <p style="color: #666; margin-bottom: 20px;">Your site scored on the 5 most important startup metrics</p>
+                <h3>Main Startup Criteria <span class="badge badge-success" id="aiStatus">AI-Powered</span></h3>
+                <p style="color: #666; margin-bottom: 20px;">Your site scored on the 6 most important startup metrics</p>
                 <div class="ai-scores" id="mainCriteria"></div>
             </div>
 
@@ -505,7 +503,7 @@
             </div>
 
             <div class="section">
-                <h3>🧠 Behavioral Drivers</h3>
+                <h3>Behavioral Drivers</h3>
                 <p style="color: #666; margin-bottom: 20px;">How your website performs for different mindsets across User, Buyer, and Investor personas</p>
                 <div class="behavioral-drivers" id="behavioralDriverButtons"></div>
                 <div id="behavioralDriverDetails"></div>
@@ -609,31 +607,31 @@
                 { 
                     key: 'ctaStrength', 
                     label: 'CTA Strength & Placement', 
-                    icon: '🎯',
+                    icon: '',
                     data: mainCriteria.ctaStrength 
                 },
                 { 
                     key: 'socialProof', 
                     label: 'Social Proof & Trust Signals', 
-                    icon: '⭐',
+                    icon: '',
                     data: mainCriteria.socialProof 
                 },
                 { 
                     key: 'visualReadability', 
                     label: 'Visual Readability & Legibility', 
-                    icon: '📖',
+                    icon: '',
                     data: mainCriteria.visualReadability 
                 },
                 { 
                     key: 'seoDiscoverability', 
                     label: 'SEO & Discoverability Basics', 
-                    icon: '🔍',
+                    icon: '',
                     data: mainCriteria.seoDiscoverability 
                 },
                 { 
                     key: 'globalReach', 
                     label: 'Global Reach & Accessibility', 
-                    icon: '🌍',
+                    icon: '',
                     data: mainCriteria.globalReach 
                 }
             ];
@@ -641,7 +639,7 @@
             // Display score cards
             mainCriteriaDiv.innerHTML = criteria.map(c => `
                 <div class="score-card">
-                    <div class="score-label">${c.icon} ${c.label}</div>
+                    <div class="score-label">${c.label}</div>
                     <div class="score-value">${c.data.score}<span class="score-max">/10</span></div>
                 </div>
             `).join('');
@@ -650,7 +648,7 @@
             detailedAnalysis.innerHTML = criteria.map(c => `
                 <div class="persona-card" style="margin-bottom: 20px;">
                     <div class="persona-header">
-                        <span class="persona-name">${c.icon} ${c.label}</span>
+                        <span class="persona-name">${c.label}</span>
                         <span class="persona-score">${c.data.score}/10</span>
                     </div>
                     <div class="progress-bar">
@@ -683,7 +681,7 @@
                     
                     ${c.data.analysis.suggestion ? `
                         <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
-                            <strong style="color: #856404;">💡 Suggestion:</strong>
+                            <strong style="color: #856404;">Suggestion:</strong>
                             <p style="color: #856404; margin: 5px 0 0 0;">${c.data.analysis.suggestion}</p>
                         </div>
                     ` : ''}
@@ -695,11 +693,11 @@
             const personasDiv = document.getElementById('personas');
             
             const personaList = [
-                { key: 'impatientUser', icon: '⚡', name: 'Impatient User' },
-                { key: 'skepticalUser', icon: '🔒', name: 'Skeptical User' },
-                { key: 'contentQualitySeeker', icon: '📖', name: 'Content Quality Seeker' },
-                { key: 'adHater', icon: '🚫', name: 'Ad Hater' },
-                { key: 'seoOptimizer', icon: '🔍', name: 'SEO Optimizer' }
+                { key: 'impatientUser', icon: '', name: 'Impatient User' },
+                { key: 'skepticalUser', icon: '', name: 'Skeptical User' },
+                { key: 'contentQualitySeeker', icon: '', name: 'Content Quality Seeker' },
+                { key: 'adHater', icon: '', name: 'Ad Hater' },
+                { key: 'seoOptimizer', icon: '', name: 'SEO Optimizer' }
             ];
 
             personasDiv.innerHTML = personaList.map(p => {
@@ -728,18 +726,18 @@
             const detailsDiv = document.getElementById('behavioralDriverDetails');
 
             const driverConfig = [
-                { key: 'impatient', icon: '⚡', label: 'Impatient' },
-                { key: 'skeptical', icon: '🔍', label: 'Skeptical' },
-                { key: 'analytical', icon: '📊', label: 'Analytical' },
-                { key: 'indecisive', icon: '🤔', label: 'Indecisive' },
-                { key: 'cognitiveEase', icon: '🧘', label: 'Cognitive-Ease' },
-                { key: 'valueSeeking', icon: '💰', label: 'Value-Seeking' }
+                { key: 'impatient', icon: '', label: 'Impatient' },
+                { key: 'skeptical', icon: '', label: 'Skeptical' },
+                { key: 'analytical', icon: '', label: 'Analytical' },
+                { key: 'indecisive', icon: '', label: 'Indecisive' },
+                { key: 'cognitiveEase', icon: '', label: 'Cognitive-Ease' },
+                { key: 'valueSeeking', icon: '', label: 'Value-Seeking' }
             ];
 
             // Create driver buttons
             buttonsDiv.innerHTML = driverConfig.map(config => `
                 <button class="driver-button" data-driver="${config.key}">
-                    ${config.icon} ${config.label}
+                    ${config.label}
                 </button>
             `).join('');
 
@@ -780,25 +778,25 @@
             if (!driver) return;
 
             const driverIcons = {
-                'impatient': '⚡',
-                'skeptical': '🔍',
-                'analytical': '📊',
-                'indecisive': '🤔',
-                'cognitiveEase': '🧘',
-                'valueSeeking': '💰'
+                'impatient': '',
+                'skeptical': '',
+                'analytical': '',
+                'indecisive': '',
+                'cognitiveEase': '',
+                'valueSeeking': ''
             };
 
             const personaIcons = {
-                user: '👤',
-                buyer: '💼',
-                investor: '🏦'
+                user: '',
+                buyer: '',
+                investor: ''
             };
 
             // Display driver details
             detailsDiv.innerHTML = `
                 <div class="driver-details active">
                     <div class="driver-header">
-                        ${driverIcons[driverKey]} ${driver.name}
+                        ${driver.name}
                     </div>
                     <div class="driver-description">
                         ${driver.description}
@@ -810,7 +808,7 @@
                                 <div class="persona-card">
                                     <div class="persona-card-header">
                                         <div class="persona-title">
-                                            ${personaIcons[personaKey]} ${personaKey.charAt(0).toUpperCase() + personaKey.slice(1)}
+                                            ${personaKey.charAt(0).toUpperCase() + personaKey.slice(1)}
                                         </div>
                                         <div class="persona-badge">${persona.score}/10</div>
                                     </div>

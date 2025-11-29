@@ -1,507 +1,294 @@
-# StartupBoost - AI-Powered Startup Website Analyzer 🚀
+# StartupBoost - AI-Powered Startup Website Analyzer
 
-A comprehensive full-stack tool that analyzes startup websites across 5 key criteria using **Node.js**, **Python**, and **FREE Google Gemini AI**.
+![StartupBoost](https://img.shields.io/badge/AI-Powered-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Node](https://img.shields.io/badge/node-18%2B-brightgreen)
 
-## 🎯 Overview
+**StartupBoost** is an intelligent website analyzer specifically designed for startups. It evaluates your website across 6 critical criteria and analyzes how it performs for different behavioral drivers across User, Buyer, and Investor personas.
 
-This tool combines technical signal extraction, Python-powered readability analysis, and AI semantic understanding to score startup websites on:
+## Features
 
-### **5 Main Criteria:**
-1. **💎 Value Proposition** - Is it clear what the product does and who it's for?
-2. **🎯 CTA Strength** - Are calls-to-action compelling and action-oriented?
-3. **⭐ Social Proof** - Does the site establish credibility and trust?
-4. **📖 Visual Readability** - Is content scannable and easy to digest?
-5. **🔍 SEO & Discoverability** - Is the site optimized for search engines?
+### Core Analysis
+- **6 Main Startup Criteria**: Value Proposition, CTA Strength, Social Proof, Readability, SEO, and Global Reach
+- **AI-Powered Insights**: Each criterion is evaluated using advanced AI (Google Gemini 2.0 Flash) for contextual analysis
+- **Behavioral Driver Analysis**: Evaluate how your site performs across 6 behavioral drivers:
+  - Impatient - Quick decision makers who need fast, clear information
+  - Skeptical - Need proof and credibility before trusting
+  - Analytical - Detailed researchers who evaluate all options
+  - Indecisive - Struggle to make decisions without guidance
+  - Cognitive-Ease - Prefer simplicity and clarity
+  - Value-Seeking - Focus on getting maximum value for money
 
-## 🛠️ Tech Stack
+### Multi-Persona Scoring
+Each behavioral driver is scored separately for:
+- **User Persona**: Evaluates ease of use and functionality
+- **Buyer Persona**: Focuses on conversion and trust signals
+- **Investor Persona**: Analyzes credibility and growth potential
 
-- **Backend:** Node.js + Express
-- **Analysis:** Python (Flask) + Gemini AI (FREE)
-- **NLP:** Python textstat for Flesch-Kincaid readability
-- **Frontend:** HTML/CSS/JavaScript (Single-page)
+### Advanced Signal Detection
+- **Startup-Specific Signals**: Pricing visibility, free trials, customer logos, media mentions
+- **SEO Analysis**: Meta tags, Open Graph, structured data, canonical URLs
+- **Trust Signals**: Privacy policy, testimonials, security badges
+- **Global Reach**: Multi-language support, currency options, international features
+- **Technical Signals** extracted and analyzed
 
-## ✨ Features
+## Quick Start
 
-### **Multi-Layer Analysis:**
-- ✅ **Technical Signals** (60+ startup-specific signals)
-  - Pricing transparency, free trials, customer logos
-  - Media mentions, team visibility, funding info
-  - Product screenshots, demo availability
-  - Trust signals, contact info, social media
-  
-- ✅ **Python Analysis** (Microservice on port 5000)
-  - Flesch-Kincaid readability scoring
-  - Keyword density and SEO analysis
-  - Sentence/word complexity metrics
-  
-- ✅ **AI Analysis** (Gemini 2.0 Flash - FREE)
-  - Semantic content understanding
-  - Buzzword detection
-  - Value proposition clarity
-  - CTA persuasiveness evaluation
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Google Gemini API key
 
----
-
-## 🚀 Quick Start
-
-### **Prerequisites:**
-- Node.js 16+ 
-- Python 3.8+ (optional but recommended)
-- **Google Gemini API Key (FREE)** - [Get yours here in 2 minutes](https://aistudio.google.com/app/apikey)
-
-> ⚠️ **IMPORTANT for Teammates/Judges:** See [API_KEY_SETUP.md](./API_KEY_SETUP.md) for detailed setup instructions!
-
-### **Step 1: Get FREE Gemini API Key**
-
-1. Go to https://aistudio.google.com/app/apikey
-2. Sign in with your Google account
-3. Click "Create API Key" → "Create API key in new project"
-4. Copy your key (starts with `AIza...`)
-
-> 📖 **Detailed guide:** [API_KEY_SETUP.md](./API_KEY_SETUP.md)
-
-### **Step 2: Configure API Key**
-
-Create a `.env` file in the project root and add:
-```bash
-GEMINI_API_KEY=AIzaYourKeyHere
-PORT=3000
-```
-
-> ⚠️ **Note:** The `.env` file is git-ignored (not in the repo). Each person needs their own!
-
-### **Step 3: Install & Run**
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/refiadaya/StartupBoost.git
+cd StartupBoost
+
 # Install dependencies
 npm install
 
+# Create .env file
+cp .env.example .env
+
+# Add your Google Gemini API key to .env
+GEMINI_API_KEY=your_api_key_here
+PORT=3000
+```
+
+### Running the Application
+
+```bash
 # Start the server
 npm start
+
+# Server will run on http://localhost:3000
 ```
 
-Server runs at `http://localhost:3000`
+### Usage
 
-✅ **Test it works:** Open the URL and analyze any website!
+1. Open your browser and navigate to `http://localhost:3000`
+2. Enter a startup website URL (e.g., `https://stripe.com`)
+3. Click "Analyze Website"
+4. Wait for the AI-powered analysis (usually 10-20 seconds)
+5. Review your comprehensive results!
 
----
+## What You Get
 
-## 📖 API Usage
+### Main Criteria Scores (0-10)
+Each criterion includes:
+- **Technical Score**: Based on detected signals and best practices
+- **AI Analysis**: Contextual evaluation with explanations
+- **Strengths & Weaknesses**: Specific areas of excellence and improvement
+- **Actionable Suggestions**: What to improve and how
 
-### **Analyze a Website**
+### Behavioral Driver Analysis
+For each of the 6 drivers, you get:
+- **User Score**: How well it serves end-users
+- **Buyer Score**: How well it converts customers
+- **Investor Score**: How well it demonstrates potential
+- **Weighted Formula**: Combines technical signals + AI insights
+- **Persona-Specific Feedback**: Tailored recommendations
 
-**Endpoint:** `POST /api/analyze`
+## Architecture
+
+```
+StartupBoost/
+├── src/
+│   ├── routes/
+│   │   └── analyze.js          # Main API endpoint
+│   ├── services/
+│   │   ├── aiAnalyzer.js       # Google Gemini integration
+│   │   ├── signalExtractor.js  # Web scraping & signal detection
+│   │   ├── criteriaScorer.js   # Main criteria scoring logic
+│   │   └── behavioralDriverScorer.js # Behavioral driver scoring
+│   └── config/
+│       └── weights.js          # Scoring weight matrix (108 values)
+├── public/
+│   └── index.html              # Frontend UI
+├── server.js                   # Express server
+└── .env                        # Configuration
+```
+
+## Scoring Methodology
+
+### Main Criteria (6 metrics)
+Each scored 0-10 using:
+- **50% Technical Signals**: Detected features, elements, and best practices
+- **50% AI Analysis**: Contextual understanding and quality assessment
+
+### Behavioral Drivers (6 × 3 = 18 scores)
+Each driver-persona combination scored using:
+- **100% Weighted Formula**: Main criteria scores weighted by importance
+- Example: For "Cognitive-Ease × User", the formula is:
+  ```
+  Score = (0.3 × Readability) + (0.25 × ValueProp) + 
+          (0.2 × CTAStrength) + (0.15 × SEO) + 
+          (0.05 × SocialProof) + (0.05 × GlobalReach)
+  ```
+
+### Weight Matrix
+- **108 unique weights** (6 drivers × 3 personas × 6 criteria) defined in behavioral driver scorer
+- Each behavioral driver has different weights for each persona
+- Weights sum to 1.0 for each driver-persona combination
+- Based on startup best practices and conversion research
+
+## API Reference
+
+### POST `/api/analyze`
+
+Analyze a website URL.
 
 **Request:**
-```bash
-curl -X POST http://localhost:3000/api/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com"}'
-```
-
-**Response includes:**
-```json
-{
-  "success": true,
-  "url": "https://example.com",
-  "mainCriteria": {
-    "valueProposition": {
-      "score": 7,
-      "breakdown": { "technical": 3, "ai": 6 },
-      "analysis": {
-        "strengths": ["Clear H1 heading", "Benefit-focused language"],
-        "weaknesses": ["Could be more specific"],
-        "aiInsight": "Value proposition is clear but could emphasize unique benefits more",
-        "suggestion": "Highlight what makes you different from competitors"
-      }
-    },
-    "ctaStrength": { "score": 8, "breakdown": {...}, "analysis": {...} },
-    "socialProof": { "score": 6, "breakdown": {...}, "analysis": {...} },
-    "visualReadability": { "score": 7, "breakdown": {...}, "analysis": {...} },
-    "seoDiscoverability": { "score": 8, "breakdown": {...}, "analysis": {...} }
-  },
-  "signals": {
-    "headings": { "h1": [...], "h2": [...], "h3": [...] },
-    "ctas": [...],
-    "contactInfo": { "email": true, "phone": false, "address": false },
-    "socialMedia": { "hasLinks": true, "count": 3 },
-    "trustSignals": { "hasHttps": true, "hasPrivacyPolicy": true },
-    "startupSignals": {
-      "hasPricing": true,
-      "hasFreeTrial": true,
-      "hasCustomerLogos": true,
-      "hasMediaMentions": true,
-      "hasMetrics": true,
-      "hasTeamSection": true
-    },
-    "textContent": {
-      "wordCount": 543,
-      "valueProposition": "...",
-      "headingsSummary": "..."
-    }
-  },
-  "aiAnalysis": {
-    "success": true,
-    "valueProposition": { "score": 7, "explanation": "...", "strengths": [...], "weaknesses": [...] },
-    "ctaStrength": { "score": 8, "explanation": "..." },
-    "socialProof": { "score": 6, "explanation": "..." },
-    "readability": { "score": 7, "explanation": "..." },
-    "seoQuality": { "score": 8, "explanation": "..." },
-    "pythonReadability": {
-      "success": false  // true if Python service running
-      // When true: includes fleschReadingEase, difficulty, recommendation
-    }
-  }
-}
-```
-
----
-
-## 🎓 How the 5 Criteria Are Analyzed
-
-Each criterion uses a **hybrid scoring approach** combining technical signals, Python analysis (optional), and AI evaluation:
-
-### **1️⃣ Value Proposition Clarity (0-10)**
-**Weight:** 40% Technical + 60% AI
-
-**Technical Signals (4 points):**
-- ✅ H1 heading present and scannable (5-100 chars)
-- ✅ Benefit-focused keywords (save, grow, boost, help, solve, easy, fast)
-- ✅ Value prop visible in first section (20+ chars)
-- ✅ Meta description exists (50+ chars)
-- 🆕 **Startup Bonuses:**
-  - Pricing transparency visible (+0.5)
-  - Product screenshots/demo video (+0.5)
-  - Use cases shown (+0.5)
-  - Feature list present (+0.5)
-
-**AI Analysis (6 points):**
-- 🤖 Evaluates clarity and uniqueness
-- 🤖 Checks benefit articulation
-- 🤖 Assesses target audience clarity
-- 🤖 Provides strengths, weaknesses, and suggestions
-
-**Formula:** `(technical/6.25 * 4) + (aiScore * 0.6)`
-
----
-
-### **2️⃣ CTA Strength (0-10)**
-**Weight:** 50% Technical + 50% AI
-
-**Technical Signals (5 points):**
-- ✅ Primary CTA button exists
-- ✅ Multiple CTAs for different conversion stages
-- ✅ CTAs visible above the fold
-- ✅ Contrasting colors for visibility
-- ✅ Urgency language (free, now, today, instant)
-- 🆕 **Startup Bonuses:**
-  - Free trial offer (+1 point)
-  - Demo available (+0.5)
-  - Chat widget present (+0.5)
-
-**AI Analysis (5 points):**
-- 🤖 CTA clarity and action-oriented language
-- 🤖 Urgency and value communication
-- 🤖 CTA placement and visual hierarchy
-- 🤖 Persuasiveness evaluation
-
-**Formula:** `(technical/7 * 5) + (aiScore * 0.5)`
-
----
-
-### **3️⃣ Social Proof & Trust (0-10)**
-**Weight:** 40% Technical + 60% AI
-
-**Technical Signals (4 points):**
-- ✅ HTTPS enabled
-- ✅ Privacy policy link
-- ✅ Contact information visible
-- ✅ Testimonials present
-- 🆕 **Startup Bonuses:**
-  - Customer logos displayed (+0.75)
-  - Brand names mentioned (+0.75)
-  - Media mentions (+0.75)
-  - Metrics/numbers shown (+0.5)
-  - Team/About section (+0.5)
-  - Funding information (+0.5)
-  - Awards/recognition (+0.5)
-
-**AI Analysis (6 points):**
-- 🤖 Credibility of testimonials
-- 🤖 Authority and trust signals quality
-- 🤖 Social proof authenticity vs quantity
-- 🤖 Brand perception
-
-**Formula:** `(technical/8 * 4) + (aiScore * 0.6)`
-
----
-
-### **4️⃣ Visual Readability (0-10)**
-**Weight:** 30% Technical + 70% AI/Python
-
-**Technical Signals (3 points):**
-- ✅ Word count (100+ words = sufficient content)
-- ✅ Scannable length (50-2000 words optimal)
-- ✅ Heading hierarchy (H1, H2, H3 structure)
-- ✅ Visual elements (1-10 images for breaks)
-
-**AI Analysis (7 points):**
-- 🤖 Sentence complexity evaluation
-- 🤖 Paragraph structure assessment
-- 🤖 Whitespace and scannability
-- 🤖 Readability recommendation
-
-**Python Enhancement (optional):**
-- 🐍 Flesch-Kincaid Reading Ease score (0-100)
-- 🐍 Average sentence length metrics
-- 🐍 Syllables per word count
-- 🐍 Difficulty level (Very Easy → Very Hard)
-- *Note: Falls back to AI-only if Python unavailable*
-
-**Formula:** `(technical/3 * 3) + (readabilityScore * 0.7)`
-
----
-
-### **5️⃣ SEO & Discoverability (0-10)**
-**Weight:** 40% Technical + 60% AI
-
-**Technical Signals (4 points):**
-- ✅ Title tag exists (30-60 chars optimal)
-- ✅ Meta description (100-160 chars)
-- ✅ H1-H6 heading structure
-- ✅ Image alt tags present
-
-**AI Analysis (6 points):**
-- 🤖 Keyword strategy evaluation
-- 🤖 Content structure for SEO
-- 🤖 Semantic relevance
-- 🤖 Search intent alignment
-
-**Formula:** `(technical/4 * 4) + (aiScore * 0.6)`
-
----
-
-## 🔑 Key Features
-
-- **60+ Technical Signals** extracted from HTML/CSS
-- **14 Startup-Specific Signals** (pricing, trials, logos, media, metrics)
-- **Temperature=0 AI** for consistent, deterministic scoring
-- **Graceful Degradation** - works without Python (AI compensates)
-- **FREE Gemini API** - no cost for AI analysis
-
----
-
-## 🏗️ Project Structure
-
-```
-.
-├── package.json
-├── .gitignore
-├── README.md
-└── src/
-    ├── server.js              # Main Express server
-    ├── routes/
-    │   └── analyze.js         # API route handlers
-    └── services/
-        ├── pageFetcher.js     # Fetches and parses web pages
-        ├── signalExtractor.js # Extracts page signals
-        └── personaScorer.js   # Scores pages for each persona
-```
-
-## Installation
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-## Running the Server
-
-Development mode (with auto-reload):
-```bash
-npm run dev
-```
-
-Production mode:
-```bash
-npm start
-```
-
-The server will start on `http://localhost:3000` by default.
-
-## API Usage
-
-### Analyze a Website
-
-**Endpoint:** `POST /api/analyze`
-
-**Request Body:**
 ```json
 {
   "url": "https://example.com"
 }
 ```
 
-**Example using curl:**
-```bash
-curl -X POST http://localhost:3000/api/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com"}'
-```
-
-**Example using JavaScript/fetch:**
-```javascript
-fetch('http://localhost:3000/api/analyze', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    url: 'https://example.com'
-  })
-})
-  .then(response => response.json())
-  .then(data => console.log(data));
-```
-
-### Response Format
-
+**Response:**
 ```json
 {
   "success": true,
   "url": "https://example.com",
-  "statusCode": 200,
-  "analyzedAt": "2025-11-28T10:30:00.000Z",
-  "signals": {
-    "headings": {
-      "h1": ["Main Heading"],
-      "h2": ["Section 1", "Section 2"],
-      "h3": ["Subsection"],
-      "total": 4
-    },
-    "ctas": {
-      "count": 3,
-      "items": [
-        {
-          "text": "Sign Up",
-          "type": "button",
-          "href": "/signup"
-        }
-      ]
-    },
-    "contactInfo": {
-      "hasEmail": true,
-      "hasPhone": true,
-      "hasAddress": false,
-      "hasContactForm": true
-    },
-    "content": {
-      "paragraphCount": 10,
-      "imageCount": 5,
-      "linkCount": 20,
-      "totalTextLength": 2500,
-      "hasVideo": false
-    },
-    "metadata": {
-      "title": "Example Website",
-      "description": "This is an example",
-      "hasOgImage": true,
-      "hasFavicon": true
+  "timestamp": "2025-11-29T12:00:00Z",
+  "mainCriteria": {
+    "valueProposition": {
+      "score": 8.5,
+      "technical": 8.0,
+      "ai": 9.0,
+      "analysis": {
+        "explanation": "...",
+        "strengths": [...],
+        "weaknesses": [...],
+        "suggestions": [...]
+      }
     }
   },
-  "personas": {
-    "impatientUser": {
-      "score": 85,
-      "maxScore": 100,
-      "percentage": 85,
-      "insights": [
-        "✓ Has a clear main heading",
-        "✓ Multiple clear calls-to-action",
-        "✓ Content is concise and scannable"
-      ],
-      "description": "An impatient user wants quick value, clear CTAs, and easy-to-scan content"
-    },
-    "skepticalUser": {
-      "score": 75,
-      "maxScore": 100,
-      "percentage": 75,
-      "insights": [
-        "✓ Email address found",
-        "✓ Contact form available",
-        "✓ Has page title",
-        "✓ Substantial content provided"
-      ],
-      "description": "A skeptical user looks for trust signals, contact information, and credibility"
+  "behavioralDrivers": {
+    "impatient": {
+      "user": { "score": 8.5, "breakdown": {...} },
+      "buyer": { "score": 7.8, "breakdown": {...} },
+      "investor": { "score": 7.2, "breakdown": {...} }
     }
   }
 }
 ```
 
-### Health Check
+### GET `/health`
 
-**Endpoint:** `GET /health`
+Health check endpoint.
 
-Returns server status:
-```json
-{
-  "status": "ok",
-  "message": "Website analyzer is running"
-}
+## Key Technologies
+
+- **Backend**: Node.js, Express.js
+- **AI**: Google Gemini 2.0 Flash (Free tier available)
+- **Web Scraping**: Cheerio, Axios
+- **Frontend**: Vanilla JavaScript, CSS3
+- **Deployment**: Compatible with Vercel, Render, Railway, Heroku
+
+## UI Features
+
+- **Clean, Modern Design**: Dark blue gradient background with white cards
+- **Responsive Layout**: Works on desktop, tablet, and mobile
+- **Real-time Analysis**: Loading states and progress indicators
+- **Expandable Sections**: Click to expand behavioral driver details
+- **Professional Look**: Clean typography, smooth animations
+
+## Environment Variables
+
+```env
+# Required
+GEMINI_API_KEY=your_key_here    # Your Google Gemini API key
+
+# Optional
+PORT=3000                       # Server port (default: 3000)
+NODE_ENV=production             # Environment
 ```
 
-## Features
+## Troubleshooting
 
-### Current Capabilities
+### Common Issues
 
-- ✅ Fetch and parse any public website
-- ✅ Extract page signals (headings, CTAs, contact info, content metrics)
-- ✅ Score pages from two persona perspectives
-- ✅ Return detailed insights for each persona
-- ✅ Error handling for invalid URLs, timeouts, etc.
+**"AI analysis failed"**
+- Check your Google Gemini API key in `.env`
+- Ensure you have API access enabled
+- Check your internet connection
 
-### Scoring Criteria
+**"Failed to fetch website"**
+- The target website may block scrapers
+- Try a different URL
+- Some sites require authentication
 
-**Impatient User (max 100 points):**
-- Clear H1 heading (20 pts)
-- Multiple CTAs (30 pts)
-- Concise paragraphs (20 pts)
-- Good heading structure (15 pts)
-- Visual elements (15 pts)
+**Server won't start**
+- Check if port 3000 is already in use: `lsof -ti:3000`
+- Kill the process: `killall node` (macOS/Linux)
+- Try a different port in `.env`
 
-**Skeptical User (max 100 points):**
-- Contact information (40 pts)
-- Professional metadata (30 pts)
-- Content depth (30 pts)
+## Development
 
-## Future Extensions
+```bash
+# Install dependencies
+npm install
 
-This is a minimal foundation. You can easily extend it with:
+# Run in development mode
+npm start
 
-- More personas (e.g., accessibility-focused, mobile-first)
-- Niche-specific rules (startups, nonprofits, e-commerce)
-- AI-powered analysis
-- Performance metrics
-- Mobile responsiveness checks
-- SEO scoring
-- A frontend interface
+# The server will automatically restart on file changes
+```
 
-## Error Handling
+## Contributing
 
-The API handles common errors:
-- Invalid URLs
-- Unreachable websites
-- Timeouts (10 second limit)
-- HTTP errors
+This is a hackathon project, but contributions are welcome!
 
-All errors return appropriate HTTP status codes and descriptive messages.
-
-## Dependencies
-
-- **express**: Web server framework
-- **axios**: HTTP client for fetching pages
-- **cheerio**: jQuery-like HTML parser
-- **cors**: Enable CORS for frontend integration
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
 ## License
 
-MIT
+MIT License - feel free to use this project for your own purposes!
+
+## Authors
+
+- **Refia daya** - [GitHub](https://github.com/refiadaya)
+
+## Acknowledgments
+
+- Google for the Gemini API
+- The startup community for inspiration
+- Conversion optimization research and best practices
+- All open-source libraries used in this project
+
+## Future Enhancements
+
+- [ ] Export results as PDF
+- [ ] Historical tracking and comparison
+- [ ] Competitor analysis (side-by-side)
+- [ ] Multi-page analysis (crawl and analyze entire website structure)
+- [ ] Deep-layer navigation (analyze multiple levels: homepage → product pages → pricing → about)
+- [ ] Python integration for advanced data processing and ML-based recommendations
+- [ ] Page speed and performance metrics
+- [ ] Accessibility (A11y) compliance checking
+- [ ] User authentication and saved reports
+- [ ] Custom weight configurations
+- [ ] Industry-specific templates
+
+## Support
+
+For questions or issues:
+- Open an issue on GitHub
+- Email: refia.daya@tum.de
+
+## 📚 Documentation
+
+For technical details, API reference, and deployment guides, see [DOCUMENTATION.md](./DOCUMENTATION.md)
+
+---
+
+**Made with ❤️ for the startup community**
+
+*Analyze. Optimize. Grow.* 🚀
