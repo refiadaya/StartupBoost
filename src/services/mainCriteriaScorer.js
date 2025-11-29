@@ -1,13 +1,13 @@
 /**
  * Main Criteria Scorer
- * Scores websites on 5 key startup criteria using technical + AI analysis
+ * Scores websites on 6 key startup criteria using technical + AI analysis
  */
 
 /**
- * Score all 5 main criteria
+ * Score all 6 main criteria
  * @param {Object} signals - Extracted signals from the page
  * @param {Object} aiAnalysis - AI analysis results
- * @returns {Object} Scores for all 5 main criteria
+ * @returns {Object} Scores for all 6 main criteria
  */
 function scoreMainCriteria(signals, aiAnalysis) {
   return {
@@ -16,6 +16,7 @@ function scoreMainCriteria(signals, aiAnalysis) {
     socialProof: scoreSocialProof(signals, aiAnalysis),
     visualReadability: scoreVisualReadability(signals, aiAnalysis),
     seoDiscoverability: scoreSEODiscoverability(signals, aiAnalysis),
+    globalReach: scoreGlobalReach(signals, aiAnalysis),
   };
 }
 
@@ -625,6 +626,100 @@ function scoreSEODiscoverability(signals, aiAnalysis) {
       aiInsight,
       suggestion: aiAnalysis.seoQuality?.suggestion || 
                  'Optimize title, description, and add structured data'
+    }
+  };
+}
+
+/**
+ * 6️⃣ Global Reach & Accessibility (0-10)
+ * Checks if the site is designed for international markets
+ * 40% Technical + 60% AI
+ */
+function scoreGlobalReach(signals, aiAnalysis) {
+  let technicalScore = 0;
+  const strengths = [];
+  const weaknesses = [];
+
+  const globalReach = signals.globalReach || {};
+
+  // Technical Analysis (40% weight = 4 points max)
+  
+  // Language selector (1 point)
+  if (globalReach.hasLanguageSelector) {
+    technicalScore += 1;
+    strengths.push('Language selector available');
+  } else {
+    weaknesses.push('No language selector found');
+  }
+
+  // Hreflang tags (1.5 points)
+  if (globalReach.hasHreflangTags) {
+    technicalScore += 1.5;
+    strengths.push(`Hreflang tags present (${globalReach.hreflangCount} languages)`);
+  } else {
+    weaknesses.push('No hreflang tags for international SEO');
+  }
+
+  // Currency switcher (1 point)
+  if (globalReach.hasCurrencySwitcher) {
+    technicalScore += 1;
+    strengths.push('Currency switcher available');
+  } else if (globalReach.currencies.length > 1) {
+    technicalScore += 0.5;
+    strengths.push(`Multiple currencies mentioned (${globalReach.currencies.join(', ')})`);
+  } else {
+    weaknesses.push('No currency options for international users');
+  }
+
+  // International shipping (0.5 points)
+  if (globalReach.hasInternationalShipping) {
+    technicalScore += 0.5;
+    strengths.push('International shipping mentioned');
+  }
+
+  // Time zones (0.5 points)
+  if (globalReach.mentionsTimeZones) {
+    technicalScore += 0.5;
+    strengths.push('Time zone awareness');
+  }
+
+  // Global payment methods (0.5 points)
+  if (globalReach.hasGlobalPaymentMethods) {
+    technicalScore += 0.5;
+    strengths.push('Global payment methods supported');
+  }
+
+  // AI Analysis (60% weight = 6 points max)
+  const aiScore = aiAnalysis.globalReach?.score || 5;
+  const aiInsight = aiAnalysis.globalReach?.explanation || 
+                   'Analyze international focus and market mentions';
+
+  // Add AI-detected strengths/weaknesses
+  if (aiAnalysis.globalReach?.strengths) {
+    strengths.push(...aiAnalysis.globalReach.strengths);
+  }
+  if (aiAnalysis.globalReach?.weaknesses) {
+    weaknesses.push(...aiAnalysis.globalReach.weaknesses);
+  }
+
+  // Combined Score: 40% technical (scaled to 4) + 60% AI (scaled to 6)
+  const finalScore = Math.round(
+    (technicalScore * 2.5) * 0.4 + // Technical max is 4, scale to 10 then apply 40%
+    aiScore * 0.6                   // AI already 0-10, apply 60%
+  );
+
+  return {
+    score: Math.min(10, Math.max(0, finalScore)),
+    breakdown: {
+      technical: Math.round(technicalScore * 2.5), // Scale to 10
+      ai: aiScore
+    },
+    analysis: {
+      strengths: strengths.slice(0, 3),
+      weaknesses: weaknesses.slice(0, 3),
+      aiInsight,
+      suggestion: aiAnalysis.globalReach?.suggestion || 
+                 'Add language selector, hreflang tags, and currency options'
     }
   };
 }

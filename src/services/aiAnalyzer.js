@@ -88,7 +88,7 @@ SEO & TRUST DATA:
 Content preview (first 2500 chars):
 ${textContent.fullText.substring(0, 2500)}
 
-Analyze and provide scores for these 5 STARTUP-SPECIFIC criteria (use EXACTLY this JSON format):
+Analyze and provide scores for these 5 STARTUP-SPECIFIC criteria AND 6 behavioral drivers × 3 personas (use EXACTLY this JSON format):
 
 {
   "valueProposition": {
@@ -124,11 +124,50 @@ Analyze and provide scores for these 5 STARTUP-SPECIFIC criteria (use EXACTLY th
     "weaknesses": ["<SEO weakness>"],
     "suggestion": "<SEO improvement>"
   },
+  "globalReach": {
+    "score": <1-10>,
+    "explanation": "<Is the site designed for international markets? Consider: multi-language support, international focus in messaging, global market mentions, accessibility for different regions, cultural adaptation>",
+    "strengths": ["<global strength>"],
+    "weaknesses": ["<international limitation>"],
+    "suggestion": "<how to expand global reach>"
+  },
   "topSuggestions": [
     "<highest priority improvement>",
     "<second priority>",
     "<third priority>"
-  ]
+  ],
+  "behavioralDrivers": {
+    "impatient": {
+      "user": {"score": <1-10>, "strengths": ["<what works>"], "weaknesses": ["<what doesn't>"]},
+      "buyer": {"score": <1-10>, "strengths": ["<what works>"], "weaknesses": ["<what doesn't>"]},
+      "investor": {"score": <1-10>, "strengths": ["<what works>"], "weaknesses": ["<what doesn't>"]}
+    },
+    "skeptical": {
+      "user": {"score": <1-10>, "strengths": ["<trust signals>"], "weaknesses": ["<missing trust>"]},
+      "buyer": {"score": <1-10>, "strengths": ["<credibility>"], "weaknesses": ["<doubts>"]},
+      "investor": {"score": <1-10>, "strengths": ["<proof>"], "weaknesses": ["<concerns>"]}
+    },
+    "analytical": {
+      "user": {"score": <1-10>, "strengths": ["<data available>"], "weaknesses": ["<missing info>"]},
+      "buyer": {"score": <1-10>, "strengths": ["<specs/ROI>"], "weaknesses": ["<unclear details>"]},
+      "investor": {"score": <1-10>, "strengths": ["<metrics>"], "weaknesses": ["<missing data>"]}
+    },
+    "indecisive": {
+      "user": {"score": <1-10>, "strengths": ["<low-risk options>"], "weaknesses": ["<barriers>"]},
+      "buyer": {"score": <1-10>, "strengths": ["<trial/demo>"], "weaknesses": ["<friction>"]},
+      "investor": {"score": <1-10>, "strengths": ["<guidance>"], "weaknesses": ["<uncertainty>"]}
+    },
+    "cognitiveEase": {
+      "user": {"score": <1-10>, "strengths": ["<simple/clear>"], "weaknesses": ["<complex>"]},
+      "buyer": {"score": <1-10>, "strengths": ["<easy to understand>"], "weaknesses": ["<confusing>"]},
+      "investor": {"score": <1-10>, "strengths": ["<clarity>"], "weaknesses": ["<jargon>"]}
+    },
+    "valueSeeking": {
+      "user": {"score": <1-10>, "strengths": ["<clear benefits>"], "weaknesses": ["<vague value>"]},
+      "buyer": {"score": <1-10>, "strengths": ["<ROI shown>"], "weaknesses": ["<missing value>"]},
+      "investor": {"score": <1-10>, "strengths": ["<growth potential>"], "weaknesses": ["<unclear returns>"]}
+    }
+  }
 }
 
 Return ONLY valid JSON, no other text.`;

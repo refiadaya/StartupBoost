@@ -4,6 +4,7 @@ const { extractSignals } = require('../services/signalExtractor');
 const { scorePersonas } = require('../services/personaScorer');
 const { analyzeContentQuality } = require('../services/aiAnalyzer');
 const { scoreMainCriteria } = require('../services/mainCriteriaScorer');
+const { scoreBehavioralDrivers } = require('../services/behavioralDriverScorer');
 const { analyzeReadability, analyzeKeywords } = require('../services/pythonClient');
 
 const router = express.Router();
@@ -72,7 +73,10 @@ router.post('/analyze', async (req, res) => {
     // Score main criteria (new 5-criteria system)
     const mainCriteria = scoreMainCriteria(signals, aiAnalysis);
 
-    // Score personas (optional secondary analysis)
+    // Score behavioral drivers (6 drivers × 3 personas)
+    const behavioralDrivers = scoreBehavioralDrivers(signals, aiAnalysis);
+
+    // Score personas (optional secondary analysis - DEPRECATED, use behavioralDrivers instead)
     const personas = scorePersonas(signals, aiAnalysis);
 
     // Return the analysis
@@ -81,10 +85,11 @@ router.post('/analyze', async (req, res) => {
       url: finalUrl,
       statusCode,
       analyzedAt: new Date().toISOString(),
-      mainCriteria,     // Primary scores (5 criteria)
-      signals,          // Raw data
-      aiAnalysis,       // AI insights
-      personas,         // Secondary persona analysis
+      mainCriteria,          // Primary scores (6 criteria)
+      behavioralDrivers,     // Behavioral drivers (6 drivers × 3 personas)
+      signals,               // Raw data
+      aiAnalysis,            // AI insights
+      personas,              // Legacy persona analysis (deprecated)
     });
 
   } catch (error) {

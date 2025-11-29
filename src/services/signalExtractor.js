@@ -18,6 +18,7 @@ function extractSignals($) {
     seo: extractSEO($),
     blogFeatures: extractBlogFeatures($),
     textContent: extractTextContent($),
+    globalReach: extractGlobalReach($), // NEW: Global reach & accessibility signals
   };
 
   return signals;
@@ -505,6 +506,71 @@ function extractStartupSignals($) {
     hasChatWidget,
     hasJobsPage,
   };
+}
+
+/**
+ * Extract global reach and accessibility signals
+ */
+function extractGlobalReach($) {
+  const globalReach = {
+    hasLanguageSelector: false,
+    languageSelectorCount: 0,
+    hasHreflangTags: false,
+    hreflangCount: 0,
+    hasCurrencySwitcher: false,
+    hasInternationalShipping: false,
+    mentionsTimeZones: false,
+    hasGlobalPaymentMethods: false,
+    languages: [],
+    currencies: [],
+  };
+
+  // Check for language selector
+  const languageSelectors = $('[class*="lang"], [id*="lang"], [class*="language"], [id*="language"], select[name*="lang"]');
+  globalReach.hasLanguageSelector = languageSelectors.length > 0;
+  globalReach.languageSelectorCount = languageSelectors.length;
+
+  // Check for hreflang tags (indicates multi-language support)
+  const hreflangTags = $('link[hreflang]');
+  globalReach.hasHreflangTags = hreflangTags.length > 0;
+  globalReach.hreflangCount = hreflangTags.length;
+  
+  // Extract languages from hreflang
+  hreflangTags.each((i, el) => {
+    const lang = $(el).attr('hreflang');
+    if (lang && lang !== 'x-default') {
+      globalReach.languages.push(lang);
+    }
+  });
+
+  // Check for currency switcher
+  const currencySelectors = $('[class*="currency"], [id*="currency"], select[name*="currency"]');
+  globalReach.hasCurrencySwitcher = currencySelectors.length > 0;
+
+  // Look for currency symbols/codes in text
+  const pageText = $('body').text();
+  const currencyPatterns = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', '€', '£', '¥'];
+  const foundCurrencies = currencyPatterns.filter(currency => pageText.includes(currency));
+  globalReach.currencies = foundCurrencies;
+
+  // Check for international shipping mentions
+  const shippingKeywords = ['international shipping', 'worldwide shipping', 'global shipping', 'ships worldwide', 'available globally'];
+  globalReach.hasInternationalShipping = shippingKeywords.some(keyword => 
+    pageText.toLowerCase().includes(keyword)
+  );
+
+  // Check for time zone mentions
+  const timezoneKeywords = ['GMT', 'UTC', 'EST', 'PST', 'CET', 'time zone', 'timezone'];
+  globalReach.mentionsTimeZones = timezoneKeywords.some(keyword => 
+    pageText.includes(keyword)
+  );
+
+  // Check for global payment methods
+  const paymentMethods = ['PayPal', 'Stripe', 'Apple Pay', 'Google Pay', 'Alipay', 'WeChat Pay'];
+  const foundPayments = paymentMethods.filter(method => pageText.includes(method));
+  globalReach.hasGlobalPaymentMethods = foundPayments.length > 0;
+
+  return globalReach;
 }
 
 module.exports = { extractSignals };

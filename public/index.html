@@ -170,9 +170,21 @@
 
         .ai-scores {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .ai-scores {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .ai-scores {
+                grid-template-columns: 1fr;
+            }
         }
 
         .score-card {
@@ -256,6 +268,111 @@
         .persona-insights li {
             margin-bottom: 5px;
             padding-left: 10px;
+        }
+
+        /* Behavioral Drivers Styles */
+        .behavioral-drivers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .behavioral-drivers {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .behavioral-drivers {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .driver-button {
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .driver-button:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .driver-button.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .driver-details {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .driver-details.active {
+            display: block;
+        }
+
+        .driver-header {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .driver-description {
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .persona-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .persona-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .persona-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .persona-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .persona-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
         }
 
         .suggestions {
@@ -387,6 +504,13 @@
                 <div id="detailedAnalysis"></div>
             </div>
 
+            <div class="section">
+                <h3>🧠 Behavioral Drivers</h3>
+                <p style="color: #666; margin-bottom: 20px;">How your website performs for different mindsets across User, Buyer, and Investor personas</p>
+                <div class="behavioral-drivers" id="behavioralDriverButtons"></div>
+                <div id="behavioralDriverDetails"></div>
+            </div>
+
             <div class="section" style="display: none;" id="personaSection">
                 <h3>👥 Persona Scores (Optional)</h3>
                 <p style="color: #666; margin-bottom: 20px;">How your website performs for different user types</p>
@@ -454,6 +578,11 @@
             // Display main criteria (new primary display)
             displayMainCriteria(data.mainCriteria, data.aiAnalysis);
             
+            // Display behavioral drivers (NEW)
+            if (data.behavioralDrivers) {
+                displayBehavioralDrivers(data.behavioralDrivers);
+            }
+            
             // Display personas (optional)
             // displayPersonas(data.personas);
             
@@ -473,33 +602,39 @@
             const criteria = [
                 { 
                     key: 'valueProposition', 
-                    label: 'Value Proposition', 
+                    label: 'Value Proposition Clarity', 
                     icon: '💎',
                     data: mainCriteria.valueProposition 
                 },
                 { 
                     key: 'ctaStrength', 
-                    label: 'CTA Strength', 
+                    label: 'CTA Strength & Placement', 
                     icon: '🎯',
                     data: mainCriteria.ctaStrength 
                 },
                 { 
                     key: 'socialProof', 
-                    label: 'Social Proof', 
+                    label: 'Social Proof & Trust Signals', 
                     icon: '⭐',
                     data: mainCriteria.socialProof 
                 },
                 { 
                     key: 'visualReadability', 
-                    label: 'Readability', 
+                    label: 'Visual Readability & Legibility', 
                     icon: '📖',
                     data: mainCriteria.visualReadability 
                 },
                 { 
                     key: 'seoDiscoverability', 
-                    label: 'SEO', 
+                    label: 'SEO & Discoverability Basics', 
                     icon: '🔍',
                     data: mainCriteria.seoDiscoverability 
+                },
+                { 
+                    key: 'globalReach', 
+                    label: 'Global Reach & Accessibility', 
+                    icon: '🌍',
+                    data: mainCriteria.globalReach 
                 }
             ];
 
@@ -585,6 +720,130 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // NEW: Display Behavioral Drivers
+        function displayBehavioralDrivers(drivers) {
+            const buttonsDiv = document.getElementById('behavioralDriverButtons');
+            const detailsDiv = document.getElementById('behavioralDriverDetails');
+
+            const driverConfig = [
+                { key: 'impatient', icon: '⚡', label: 'Impatient' },
+                { key: 'skeptical', icon: '🔍', label: 'Skeptical' },
+                { key: 'analytical', icon: '📊', label: 'Analytical' },
+                { key: 'indecisive', icon: '🤔', label: 'Indecisive' },
+                { key: 'cognitiveEase', icon: '🧘', label: 'Cognitive-Ease' },
+                { key: 'valueSeeking', icon: '💰', label: 'Value-Seeking' }
+            ];
+
+            // Create driver buttons
+            buttonsDiv.innerHTML = driverConfig.map(config => `
+                <button class="driver-button" data-driver="${config.key}">
+                    ${config.icon} ${config.label}
+                </button>
+            `).join('');
+
+            // Store drivers data globally for click handlers
+            window.behavioralDriversData = drivers;
+            
+            // Add click event listeners to buttons
+            buttonsDiv.querySelectorAll('.driver-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const driverKey = this.getAttribute('data-driver');
+                    toggleDriver(driverKey, this);
+                });
+            });
+        }
+
+        // Toggle driver details
+        let activeDriver = null;
+        function toggleDriver(driverKey, buttonElement) {
+            const detailsDiv = document.getElementById('behavioralDriverDetails');
+            const buttons = document.querySelectorAll('.driver-button');
+            const drivers = window.behavioralDriversData;
+
+            // If clicking the same driver, close it
+            if (activeDriver === driverKey) {
+                detailsDiv.innerHTML = '';
+                activeDriver = null;
+                buttons.forEach(btn => btn.classList.remove('active'));
+                return;
+            }
+
+            // Update active state
+            activeDriver = driverKey;
+            buttons.forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+
+            // Get driver data
+            const driver = drivers[driverKey];
+            if (!driver) return;
+
+            const driverIcons = {
+                'impatient': '⚡',
+                'skeptical': '🔍',
+                'analytical': '📊',
+                'indecisive': '🤔',
+                'cognitiveEase': '🧘',
+                'valueSeeking': '💰'
+            };
+
+            const personaIcons = {
+                user: '👤',
+                buyer: '💼',
+                investor: '🏦'
+            };
+
+            // Display driver details
+            detailsDiv.innerHTML = `
+                <div class="driver-details active">
+                    <div class="driver-header">
+                        ${driverIcons[driverKey]} ${driver.name}
+                    </div>
+                    <div class="driver-description">
+                        ${driver.description}
+                    </div>
+                    <div class="persona-breakdown">
+                        ${['user', 'buyer', 'investor'].map(personaKey => {
+                            const persona = driver[personaKey];
+                            return `
+                                <div class="persona-card">
+                                    <div class="persona-card-header">
+                                        <div class="persona-title">
+                                            ${personaIcons[personaKey]} ${personaKey.charAt(0).toUpperCase() + personaKey.slice(1)}
+                                        </div>
+                                        <div class="persona-badge">${persona.score}/10</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${persona.score * 10}%"></div>
+                                    </div>
+                                    ${persona.breakdown ? `
+                                        <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+                                            Technical: ${persona.breakdown.technical}/10 | AI: ${persona.breakdown.ai}/10
+                                        </div>
+                                    ` : ''}
+                                    ${persona.strengths && persona.strengths.length > 0 ? `
+                                        <div style="margin-bottom: 10px;">
+                                            <strong style="color: #28a745;">✓ Strengths:</strong>
+                                            <ul class="persona-insights">
+                                                ${persona.strengths.map(s => `<li>${s}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
+                                    ${persona.weaknesses && persona.weaknesses.length > 0 ? `
+                                        <div>
+                                            <strong style="color: #dc3545;">✗ Needs Work:</strong>
+                                            <ul class="persona-insights">
+                                                ${persona.weaknesses.map(w => `<li>${w}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
         }
 
         function showError(message) {
