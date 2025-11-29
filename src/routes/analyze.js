@@ -70,11 +70,11 @@ router.post('/analyze', async (req, res) => {
       console.log(`✅ Python keywords: ${pythonKeywords.topKeywords?.length || 0} analyzed`);
     }
 
-    // Score main criteria (new 5-criteria system)
+    // Score main criteria (new 6-criteria system)
     const mainCriteria = scoreMainCriteria(signals, aiAnalysis);
 
-    // Score behavioral drivers (6 drivers × 3 personas)
-    const behavioralDrivers = scoreBehavioralDrivers(signals, aiAnalysis);
+    // Score behavioral drivers (6 drivers × 3 personas) using weighted main criteria
+    const behavioralDrivers = scoreBehavioralDrivers(signals, aiAnalysis, mainCriteria);
 
     // Score personas (optional secondary analysis - DEPRECATED, use behavioralDrivers instead)
     const personas = scorePersonas(signals, aiAnalysis);
