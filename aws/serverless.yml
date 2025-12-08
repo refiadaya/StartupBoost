@@ -1,0 +1,121 @@
+service: startupboost
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  memorySize: 1024
+  timeout: 30
+  environment:
+    NODE_ENV: production
+    GEMINI_API_KEY: ${env:GEMINI_API_KEY}
+    PYTHON_SERVICE_URL: ${self:custom.pythonServiceUrl.${self:provider.stage}}
+  
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource: '*'
+
+  # API Gateway configuration
+  apiGateway:
+    shouldStartNameWithService: true
+    metrics: true
+
+custom:
+  pythonServiceUrl:
+    dev: ${env:PYTHON_SERVICE_URL_DEV, 'http://localhost:5000'}
+    prod: ${env:PYTHON_SERVICE_URL_PROD}
+  
+  # For serverless-offline plugin (local development)
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002
+
+functions:
+  api:
+    handler: aws/lambda-handler.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+    layers:
+      - !Ref NodeModulesLambdaLayer
+
+  # Separate Lambda for Python analysis (optional - can use EC2 instead)
+  pythonAnalysis:
+    handler: python-lambda/handler.analyze
+    runtime: python3.11
+    timeout: 60
+    memorySize: 512
+    events:
+      - http:
+          path: /analyze/readability
+          method: POST
+          cors: true
+      - http:
+          path: /analyze/keywords
+          method: POST
+          cors: true
+
+layers:
+  NodeModules:
+    path: layer
+    name: ${self:service}-${self:provider.stage}-node-modules
+    description: Node modules for StartupBoost
+    compatibleRuntimes:
+      - nodejs18.x
+
+resources:
+  Resources:
+    # CloudWatch Log Group
+    ApiLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: /aws/lambda/${self:service}-${self:provider.stage}-api
+        RetentionInDays: 7
+
+    # API Gateway Custom Domain (optional)
+    # ApiDomainName:
+    #   Type: AWS::ApiGateway::DomainName
+    #   Properties:
+    #     DomainName: api.yourdomain.com
+    #     CertificateArn: arn:aws:acm:us-east-1:xxxxx:certificate/xxxxx
+
+  Outputs:
+    ApiUrl:
+      Description: URL of the API Gateway endpoint
+      Value:
+        Fn::Join:
+          - ''
+          - - 'https://'
+            - Ref: ApiGatewayRestApi
+            - '.execute-api.'
+            - ${self:provider.region}
+            - '.amazonaws.com/'
+            - ${self:provider.stage}
+    
+    LambdaFunctionArn:
+      Description: ARN of the Lambda function
+      Value:
+        Fn::GetAtt: [ApiLambdaFunction, Arn]
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-optimize

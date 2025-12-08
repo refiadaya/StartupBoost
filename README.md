@@ -180,13 +180,75 @@ Analyze a website URL.
 
 Health check endpoint.
 
+## Deployment
+
+This project includes comprehensive AWS deployment setup with multiple options:
+
+### 🚀 Quick Deploy
+
+```bash
+# Local testing with Docker
+npm run aws:setup
+
+# Deploy to AWS EC2
+npm run aws:deploy:ec2
+
+# Deploy to AWS Lambda (serverless)
+npm run aws:deploy:lambda
+
+# Test deployment
+npm run aws:test
+```
+
+### 📋 Deployment Options
+
+1. **AWS EC2** - Full control with Docker containers
+   - CloudFormation infrastructure-as-code
+   - Automated deployment scripts
+   - Health monitoring and rollback capability
+   - Cost: ~$0/month (free tier) or ~$30/month
+
+2. **AWS Lambda** - Serverless, auto-scaling
+   - Serverless Framework configuration
+   - Pay-per-use pricing
+   - API Gateway integration
+   - Cost: ~$0-20/month
+
+3. **Docker Compose** - Local development and testing
+   - Multi-container setup (Node.js + Python services)
+   - Production-ready configuration
+
+### 📚 Documentation
+
+- **[AWS_SETUP_SUMMARY.md](./AWS_SETUP_SUMMARY.md)** - Complete deployment guide
+- **[QUICK_START.md](./QUICK_START.md)** - Quick reference
+- **[aws/AWS_DEPLOYMENT_GUIDE.md](./aws/AWS_DEPLOYMENT_GUIDE.md)** - Detailed AWS instructions
+
+### 🐳 Docker Support
+
+```bash
+# Build containers
+npm run docker:build
+
+# Start services
+npm run docker:up
+
+# View logs
+npm run docker:logs
+
+# Stop services
+npm run docker:down
+```
+
 ## Key Technologies
 
 - **Backend**: Node.js, Express.js
 - **AI**: Google Gemini 2.0 Flash (Free tier available)
 - **Web Scraping**: Cheerio, Axios
 - **Frontend**: Vanilla JavaScript, CSS3
-- **Deployment**: Compatible with Vercel, Render, Railway, Heroku
+- **Infrastructure**: Docker, AWS CloudFormation, Serverless Framework
+- **CI/CD**: GitHub Actions
+- **Deployment**: AWS EC2, AWS Lambda, Docker Compose
 
 ## UI Features
 
